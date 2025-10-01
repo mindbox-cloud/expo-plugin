@@ -1,0 +1,32 @@
+# macOS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Node / Expo
+node_modules/
+.expo/
+.expo-shared/
+npm-debug.log*
+yarn-error.log*
+
+# Android
+**/android/.gradle/
+**/android/build/
+**/build/
+*.keystore
+*.jks
+*.keystore.properties
+
+# iOS (на будущее/если появится)
+**/ios/Pods/
+**/ios/build/
+
+# Credentials
+google-services.json
+GoogleService-Info.plist
+examples/MindboxExpoExample/credentials/google-services.json
+
+# Misc
+.env
+.env.*

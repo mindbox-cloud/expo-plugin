@@ -17,4 +17,13 @@ export const ANDROID_CONSTANTS = {
     HUAWEI_AGCP_CLASSPATH: `    classpath 'com.huawei.agconnect:agcp:${VERSIONS.HUAWEI_AGCP}'`,
     HUAWEI_PLUGIN_STRING: "com.huawei.agconnect",
     HUAWEI_PLUGIN: "apply plugin: 'com.huawei.agconnect'",
+    HUAWEI_APP_ID_META_DATA_NAME: "com.huawei.hms.client.appid",
+    RUSTORE_MAVEN_URL: "https://artifactory-external.vkpartner.ru/artifactory/maven",
+    RUSTORE_MAVEN_REPO: "    maven {\n            url = uri(\"https://artifactory-external.vkpartner.ru/artifactory/maven\")\n        }",
+    RUSTORE_PROJECT_ID_META_DATA_NAME: "ru.rustore.sdk.pushclient.project_id",
+} as const;
+
+
+export const REGEX_CAPTURE_GROUPS = {
+    FIRST: 1,
 } as const;

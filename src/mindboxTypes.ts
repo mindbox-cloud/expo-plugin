@@ -10,6 +10,7 @@ export type MindboxPluginProps = {
     androidPushProviders?: MindboxPushProvider[];
     googleServicesFilePath?: string;
     huaweiServicesFilePath?: string;
+    rustoreProjectId?: string;
 };
 
 

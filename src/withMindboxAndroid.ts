@@ -33,6 +33,9 @@ export const withMindboxAndroid: ConfigPlugin<MindboxPluginProps> = (config, pro
     if (props.androidPushProviders?.includes(MindboxPushProviders.Firebase)) {
         config = withFirebase(config, props);
     }
+    if (props.androidPushProviders?.includes(MindboxPushProviders.Huawei)) {
+        config = withHuawei(config, props);
+    }
     return config;
 };
 
@@ -103,6 +106,104 @@ const withFirebase: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
                 buildGradle.modResults.contents = `${applyPlugin}\n${contents}`;
             }
         }
+        return buildGradle;
+    });
+
+    return config;
+};
+
+const withHuawei: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
+    console.log('[Mindbox Plugin] withHuawei called with props:', props);
+    config = withDangerousMod(config, ["android", async (modConfig) => {
+        try {
+            const projectRoot = modConfig.modRequest.projectRoot;
+            const androidProjectRoot = modConfig.modRequest.platformProjectRoot;
+            const targetFilePath = path.join(androidProjectRoot, "app", "agconnect-services.json");
+
+            if (!props.huaweiServicesFilePath) {
+                console.warn('[Mindbox Plugin] huaweiServicesFilePath is not set. agconnect-services.json will not be copied.');
+                return modConfig;
+            }
+
+            const absoluteSource = path.resolve(projectRoot, props.huaweiServicesFilePath);
+            if (!fs.existsSync(absoluteSource)) {
+                console.warn(`[Mindbox Plugin] huaweiServicesFilePath not found: ${absoluteSource}`);
+                return modConfig;
+            }
+
+            const sourceJson = fs.readFileSync(absoluteSource, { encoding: "utf8" });
+            const targetDir = path.dirname(targetFilePath);
+            if (!fs.existsSync(targetDir)) {
+                fs.mkdirSync(targetDir, { recursive: true });
+            }
+
+            if (fs.existsSync(targetFilePath)) {
+                const existing = fs.readFileSync(targetFilePath, { encoding: "utf8" });
+                if (existing.trim() === sourceJson.trim()) {
+                    console.log('[Mindbox Plugin] agconnect-services.json already up to date.');
+                    return modConfig;
+                }
+            }
+
+            fs.writeFileSync(targetFilePath, sourceJson, { encoding: "utf8" });
+            console.log('[Mindbox Plugin] agconnect-services.json written to android/app.');
+        } catch (e) {
+            console.warn('[Mindbox Plugin] Failed to place agconnect-services.json:', e);
+        }
+        return modConfig;
+    }]);
+
+    config = withProjectBuildGradle(config, (buildGradle) => {
+        const repoMarker = ANDROID_CONSTANTS.HUAWEI_MAVEN_URL;
+        const agcpMarker = ANDROID_CONSTANTS.HUAWEI_AGCP_CLASSPATH_STRING;
+
+        // Ensure Huawei Maven in allprojects.repositories
+        const allprojectsReposRegex = /(allprojects\s*\{[\s\S]*?repositories\s*\{)([\s\S]*?)(\n\s*\})/m;
+        const allprojectsReposMatch = buildGradle.modResults.contents.match(allprojectsReposRegex);
+        if (allprojectsReposMatch && !allprojectsReposMatch[2].includes(repoMarker)) {
+            buildGradle.modResults.contents = buildGradle.modResults.contents.replace(
+                allprojectsReposRegex,
+                `$1$2\n${ANDROID_CONSTANTS.HUAWEI_MAVEN_REPO}$3`
+            );
+        }
+
+        // Ensure Huawei Maven in buildscript.repositories
+        const buildscriptReposRegex = /(buildscript\s*\{[\s\S]*?repositories\s*\{)([\s\S]*?)(\n\s*\})/m;
+        const buildscriptReposMatch = buildGradle.modResults.contents.match(buildscriptReposRegex);
+        if (buildscriptReposMatch && !buildscriptReposMatch[2].includes(repoMarker)) {
+            buildGradle.modResults.contents = buildGradle.modResults.contents.replace(
+                buildscriptReposRegex,
+                `$1$2\n${ANDROID_CONSTANTS.HUAWEI_MAVEN_REPO}$3`
+            );
+        }
+
+        // Ensure AGCP classpath in buildscript.dependencies
+        const buildscriptDepsRegex = /(buildscript[\s\S]*?dependencies\s*\{)([\s\S]*?)(\n\s*\})/m;
+        const buildscriptDepsMatch = buildGradle.modResults.contents.match(buildscriptDepsRegex);
+        if (buildscriptDepsMatch && !buildscriptDepsMatch[2].includes(agcpMarker)) {
+            buildGradle.modResults.contents = buildGradle.modResults.contents.replace(
+                buildscriptDepsRegex,
+                `$1\n${ANDROID_CONSTANTS.HUAWEI_AGCP_CLASSPATH}$2$3`
+            );
+        }
+
+        return buildGradle;
+    });
+
+    config = withAppBuildGradle(config, (buildGradle) => {
+        const contents = buildGradle.modResults.contents;
+        const pluginMarker = ANDROID_CONSTANTS.HUAWEI_PLUGIN_STRING;
+        const pluginLine = ANDROID_CONSTANTS.HUAWEI_PLUGIN;
+        if (contents.startsWith(`${pluginLine}\n`) || contents.startsWith(pluginLine)) {
+            return buildGradle;
+        }
+        const hasPluginAnywhere = contents.includes(pluginMarker);
+        if (!hasPluginAnywhere) {
+            buildGradle.modResults.contents = `${pluginLine}\n${contents}`;
+            return buildGradle;
+        }
+        const removedExisting = contents.replace(/^[\t ]*apply plugin:\s*['\"]com\.huawei\.agconnect['\"][\t ]*\n?/gm, "");
+        buildGradle.modResults.contents = `${pluginLine}\n${removedExisting}`;
         return buildGradle;
     });
 

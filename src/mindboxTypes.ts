@@ -9,6 +9,7 @@ export type MindboxPushProvider = typeof MindboxPushProviders[keyof typeof Mindb
 export type MindboxPluginProps = {
     androidPushProviders?: MindboxPushProvider[];
     googleServicesFilePath?: string;
+    huaweiServicesFilePath?: string;
 };
 
 

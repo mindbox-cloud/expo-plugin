@@ -1,4 +1,4 @@
-import { ConfigPlugin, withAppBuildGradle, withProjectBuildGradle, withDangerousMod } from "@expo/config-plugins";
+import { ConfigPlugin, withAppBuildGradle, withProjectBuildGradle, withDangerousMod, withAndroidManifest, AndroidConfig } from "@expo/config-plugins";
 import { MindboxPushProviders } from "./mindboxTypes";
 import type { MindboxPluginProps, MindboxPushProvider } from "./mindboxTypes";
 import { ANDROID_CONSTANTS } from "./helpers/androidConstants";
@@ -152,6 +152,61 @@ const withHuawei: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
         }
         return modConfig;
     }]);
+
+    // Fallback: ensure AndroidManifest contains Huawei appid meta-data if missing (Expo manifest API)
+    config = withAndroidManifest(config, (manifestConfig) => {
+        try {
+            const androidProjectRoot = manifestConfig.modRequest.platformProjectRoot;
+            // Resolve application package name from app/build.gradle
+            const appBuildGradlePath = path.join(androidProjectRoot, "app", "build.gradle");
+            let packageName: string | null = null;
+            if (fs.existsSync(appBuildGradlePath)) {
+                const gradle = fs.readFileSync(appBuildGradlePath, { encoding: "utf8" });
+                const appIdMatch = gradle.match(/applicationId\s+['\"]([^'\"]+)['\"]/);
+                if (appIdMatch) packageName = appIdMatch[1];
+                if (!packageName) {
+                    const nsMatch = gradle.match(/namespace\s+['\"]([^'\"]+)['\"]/);
+                    if (nsMatch) packageName = nsMatch[1];
+                }
+            }
+            if (!packageName) return manifestConfig;
+
+            // Read app_id from agconnect-services.json in app/ for the resolved package
+            const agcPath = path.join(androidProjectRoot, "app", "agconnect-services.json");
+            if (!fs.existsSync(agcPath)) return manifestConfig;
+            let appId: string | null = null;
+            try {
+                const json = JSON.parse(fs.readFileSync(agcPath, { encoding: "utf8" }));
+                if (json?.client?.package_name === packageName && json?.client?.app_id) {
+                    appId = String(json.client.app_id);
+                }
+                if (!appId && json?.app_info?.package_name === packageName && json?.app_info?.app_id) {
+                    appId = String(json.app_info.app_id);
+                }
+                if (!appId && Array.isArray(json?.appInfos)) {
+                    const matchItem = json.appInfos.find((it: any) => (
+                        it?.package_name === packageName ||
+                        it?.app_info?.package_name === packageName
+                    ));
+                    if (matchItem) {
+                        if (matchItem?.client?.app_id) appId = String(matchItem.client.app_id);
+                        else if (matchItem?.app_info?.app_id) appId = String(matchItem.app_info.app_id);
+                    }
+                }
+            } catch {}
+            if (!appId) return manifestConfig;
+
+            const name = "com.huawei.hms.client.appid";
+            const value = `appid=${appId}`;
+            const mainApp = AndroidConfig.Manifest.getMainApplicationOrThrow(manifestConfig.modResults);
+            AndroidConfig.Manifest.removeMetaDataItemFromMainApplication(mainApp, name);
+            AndroidConfig.Manifest.addMetaDataItemToMainApplication(mainApp, name, value, "value");
+            console.log('[Mindbox Plugin] Ensured Huawei appid meta-data in AndroidManifest.xml');
+        } catch (e) {
+            console.warn('[Mindbox Plugin] Failed to ensure Huawei appid meta-data via manifest mod:', e);
+        }
+        return manifestConfig;
+    });
 
     config = withProjectBuildGradle(config, (buildGradle) => {
         const repoMarker = ANDROID_CONSTANTS.HUAWEI_MAVEN_URL;

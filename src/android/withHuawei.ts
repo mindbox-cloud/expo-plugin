@@ -66,7 +66,8 @@ export const withHuawei: ConfigPlugin<MindboxPluginProps> = (config, props = {})
         addPluginToGradle(
             buildGradle,
             ANDROID_CONSTANTS.HUAWEI_PLUGIN,
-            ANDROID_CONSTANTS.HUAWEI_PLUGIN_STRING
+            ANDROID_CONSTANTS.HUAWEI_PLUGIN_STRING,
+            true
         );
         return buildGradle;
     });

@@ -21,3 +21,4 @@ export const addMindboxDependencies: ConfigPlugin<MindboxPluginProps> = (config,
         return buildGradle;
     });
 };
+

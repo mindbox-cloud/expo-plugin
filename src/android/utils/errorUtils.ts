@@ -42,14 +42,14 @@ export const withErrorHandling = async <T>(
     operation: string,
     fn: () => Promise<T>,
     details?: Record<string, any>
-): Promise<T> => {
+): Promise<T | null> => {
     try {
         const result = await fn();
         logSuccess(operation, details);
         return result;
     } catch (error) {
         logError(operation, error as Error, details);
-        throw error;
+        return null;
     }
 };
 

@@ -5,9 +5,11 @@ import { withFirebase } from "./android/withFirebase";
 import { withHuawei } from "./android/withHuawei";
 import { withRustore } from "./android/withRustore";
 import { addMindboxDependencies } from "./android/withMindboxDependencies";
+import { withResources } from "./android/withResources";
 
 export const withMindboxAndroid: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
     config = addMindboxDependencies(config, props);
+    config = withResources(config, props);
 
     const providerHandlers = [
         {

@@ -11,6 +11,11 @@ export type MindboxPluginProps = {
     googleServicesFilePath?: string;
     huaweiServicesFilePath?: string;
     rustoreProjectId?: string;
+    androidChannelId?: string;
+    androidChannelName?: string;
+    androidChannelDescription?: string;
+    smallIcon?: string;
+    smallIconAccentColor?: string;
 };
 
 

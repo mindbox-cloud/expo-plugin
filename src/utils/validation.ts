@@ -12,7 +12,7 @@ const MINDBOX_PLUGIN_PROPS = [
   "smallIconAccentColor",
 ] as const;
 
-export function validatePluginProps(props: any): void {
+export function validatePluginProps(props: MindboxPluginProps): void {
   if (props.androidPushProviders && !Array.isArray(props.androidPushProviders)) {
     throw new Error("Mindbox Expo Plugin: 'androidPushProviders' must be an array.");
   }

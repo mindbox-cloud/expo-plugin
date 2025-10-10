@@ -1,10 +1,12 @@
+export const MINDBOX_PLUGIN_LOG_TAG = '[Mindbox Expo Plugin]';
+
 export const logError = (
     operation: string,
     error: Error | string,
     details?: Record<string, any>
 ): void => {
     const errorMessage = error instanceof Error ? error.message : error;
-    const logMessage = `[Mindbox Plugin] Failed to ${operation}: ${errorMessage}`;
+    const logMessage = `${MINDBOX_PLUGIN_LOG_TAG} Failed to ${operation}: ${errorMessage}`;
 
     if (details) {
         console.warn(logMessage, details);
@@ -18,7 +20,7 @@ export const logWarning = (
     message: string,
     details?: Record<string, any>
 ): void => {
-    const logMessage = `[Mindbox Plugin] Warning in ${operation}: ${message}`;
+    const logMessage = `${MINDBOX_PLUGIN_LOG_TAG} Warning in ${operation}: ${message}`;
 
     if (details) {
         console.warn(logMessage, details);
@@ -32,9 +34,9 @@ export const logSuccess = (
     details?: Record<string, any>
 ): void => {
     if (details) {
-        console.log(`[Mindbox Plugin] ${operation} completed successfully`, details);
+        console.log(`${MINDBOX_PLUGIN_LOG_TAG} ${operation} completed successfully`, details);
     } else {
-        console.log(`[Mindbox Plugin] ${operation} completed successfully`);
+        console.log(`${MINDBOX_PLUGIN_LOG_TAG} ${operation} completed successfully`);
     }
 };
 

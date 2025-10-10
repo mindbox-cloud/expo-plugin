@@ -1,7 +1,7 @@
 import { AndroidConfig, ConfigPlugin, withAndroidManifest, withAppBuildGradle, withDangerousMod, withProjectBuildGradle } from "@expo/config-plugins";
 import type { MindboxPluginProps } from "../mindboxTypes";
 import { ANDROID_CONSTANTS } from "../helpers/androidConstants";
-import { copyServiceJsonFile, addMavenRepository, addClasspathDependency, addPluginToGradle, addManifestMetaData, extractPackageName, extractAppIdFromAgc, withErrorHandling, logSuccess } from "./utils";
+import { copyServiceJsonFile, addMavenRepository, addClasspathDependency, addPluginToGradle, addManifestMetaData, extractPackageName, extractAppIdFromAgc, withErrorHandling, logSuccess, logWarning } from "./utils";
 import * as path from "path";
 
 export const withHuawei: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
@@ -10,7 +10,7 @@ export const withHuawei: ConfigPlugin<MindboxPluginProps> = (config, props = {})
         const androidProjectRoot = modConfig.modRequest.platformProjectRoot;
         const targetFilePath = path.join(androidProjectRoot, "app", "agconnect-services.json");
         if (!props.huaweiServicesFilePath) {
-            console.warn('[Mindbox Plugin] huaweiServicesFilePath is not set. agconnect-services.json will not be copied.');
+            logWarning("copy agconnect-services.json", "huaweiServicesFilePath is not set. agconnect-services.json will not be copied.");
             return modConfig;
         }
         const absoluteSource = path.resolve(projectRoot, props.huaweiServicesFilePath);
@@ -27,13 +27,13 @@ export const withHuawei: ConfigPlugin<MindboxPluginProps> = (config, props = {})
         const appBuildGradlePath = path.join(androidProjectRoot, "app", "build.gradle");
         const packageName = extractPackageName(appBuildGradlePath);
         if (!packageName) {
-            console.warn('[Mindbox Plugin] Could not extract package name from build.gradle');
+            logWarning("extract package name", "Could not extract package name from build.gradle");
             return manifestConfig;
         }
         const agcPath = path.join(androidProjectRoot, "app", "agconnect-services.json");
         const appId = extractAppIdFromAgc(agcPath, packageName);
         if (!appId) {
-            console.warn('[Mindbox Plugin] Could not extract app ID from agconnect-services.json');
+            logWarning("extract app ID", "Could not extract app ID from agconnect-services.json");
             return manifestConfig;
         }
         const value = `appid=${appId}`;

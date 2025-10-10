@@ -1,7 +1,7 @@
 import { ConfigPlugin, withAppBuildGradle, withDangerousMod, withProjectBuildGradle } from "@expo/config-plugins";
 import type { MindboxPluginProps } from "../mindboxTypes";
 import { ANDROID_CONSTANTS } from "../helpers/androidConstants";
-import { copyServiceJsonFile, addClasspathDependency, addPluginToGradle, withErrorHandling } from "./utils";
+import { copyServiceJsonFile, addClasspathDependency, addPluginToGradle, withErrorHandling, logWarning } from "./utils";
 import * as path from "path";
 
 export const withFirebase: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
@@ -10,7 +10,7 @@ export const withFirebase: ConfigPlugin<MindboxPluginProps> = (config, props = {
         const androidProjectRoot = modConfig.modRequest.platformProjectRoot;
         const targetFilePath = path.join(androidProjectRoot, "app", "google-services.json");
         if (!props.googleServicesFilePath) {
-            console.warn('[Mindbox Plugin] googleServicesFilePath is not set. google-services.json will not be copied.');
+            logWarning("copy google-services.json", "googleServicesFilePath is not set. google-services.json will not be copied.");
             return modConfig;
         }
         const absoluteSource = path.resolve(projectRoot, props.googleServicesFilePath);

@@ -49,11 +49,11 @@ export function validatePluginProps(props: MindboxPluginProps): void {
     throw new Error("Mindbox Expo Plugin: 'androidChannelDescription' must be a string.");
   }
 
-  if (props.icon && typeof props.icon !== "string") {
+  if (props.smallIcon && typeof props.smallIcon !== "string") {
     throw new Error("Mindbox Expo Plugin: 'icon' must be a string.");
   }
 
-  if (props.iconColor && typeof props.iconColor !== "string") {
+  if (props.smallIconAccentColor && typeof props.smallIconAccentColor !== "string") {
     throw new Error("Mindbox Expo Plugin: 'iconColor' must be a string.");
   }
 

@@ -29,12 +29,15 @@
      [
        "mindbox-expo-plugin",
        {
-         "androidPushProviders": ["firebase", "huawei","rustore"],
+         "androidPushProviders": ["firebase","huawei","rustore"],
          "googleServicesFilePath": "./credentials/google-services.json",
-         "huaweiServicesFilePath": "./credentials/google-services.json",
-         "rustoreFilePath": "124dwafwfw",
-         "channelDescription": "124dwafwfw",
-         "icon": "124dwafwfw"
+         "huaweiServicesFilePath": "./credentials/agconnect-services.json",
+         "rustoreProjectId": "",
+         "androidChannelId": "expo_channel_id",
+         "androidChannelName": "expo_name",
+         "androidChannelDescription": "expo_description",
+         "smallIcon": "./assets/icon_mb.png",
+         "smallIconAccentColor": "#80F00A0A"
        }
      ]
    ]

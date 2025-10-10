@@ -146,6 +146,7 @@ export const copyNotificationIcon = async (
     sourceRelativePath?: string
 ): Promise<CopyIconResult> => {
     if (!sourceRelativePath) {
+        logWarning("copy notification icon", "no source path provided, skipping update");
         return null;
     }
 

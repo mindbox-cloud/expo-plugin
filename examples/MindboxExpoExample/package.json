@@ -5,6 +5,7 @@
   "scripts": {
     "start": "expo start",
     "prebuildAndroid": "expo prebuild --platform android",
+    "prebuildIOS": "expo prebuild -p ios",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "wipe": "rm -rf node_modules .expo .expo-shared dist build .turbo .next .cache android ios yarn.lock package-lock.json"
@@ -15,7 +16,7 @@
     "expo": "54.0.12",
     "expo-status-bar": "~3.0.8",
     "mindbox-expo-plugin": "file:../..",
-    "mindbox-sdk": "file:/Users/sozinov/Documents/react-native-app/react-native-sdk/mindbox-sdk-2.14.1.tgz",
+    "mindbox-sdk": "file:/Users/sozinov/Documents/react-native-app/react-native-sdk/mindbox-sdk-2.14.3.tgz",
     "react": "19.1.0",
     "react-native": "0.81.4",
     "react-native-permissions": "^5.4.0",

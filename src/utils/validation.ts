@@ -10,6 +10,7 @@ const MINDBOX_PLUGIN_PROPS = [
   "androidChannelDescription",
   "smallIcon",
   "smallIconAccentColor",
+  "nativeRequestPermission"
 ] as const;
 
 export function validatePluginProps(props: MindboxPluginProps): void {

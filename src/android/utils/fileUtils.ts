@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { logSuccess } from "./errorUtils";
+import { logSuccess } from "../../utils/errorUtils";
 
 export const copyServiceJsonFile = async (
     sourcePath: string,

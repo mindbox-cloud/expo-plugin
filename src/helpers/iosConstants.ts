@@ -1,0 +1,33 @@
+export const IOS_TARGET_NSE_NAME: string = "MindboxNotificationServiceExtension";
+export const IOS_TARGET_NCE_NAME: string = "MindboxNotificationContentExtension";
+export const IOS_NSE_FILENAME_DEFAULT: string = "NotificationService.m";
+export const IOS_NCE_VIEWCONTROLLER_FILENAME_DEFAULT: string = "NotificationViewController.m";
+export const IOS_MIN_DEPLOYMENT_TARGET_DEFAULT: string = "13.0";
+export const APS_ENV_ENTITLEMENT_KEY: string = "aps-environment";
+export const ENTITLEMENT_APP_GROUPS_KEY: string = "com.apple.security.application-groups";
+export const ENTITLEMENT_GROUP_PREFIX: string = "group.cloud.Mindbox.";
+export const INFO_PLIST_KEY_UI_BACKGROUND_MODES: string = "UIBackgroundModes";
+export const INFO_PLIST_KEY_BG_TASKS: string = "BGTaskSchedulerPermittedIdentifiers";
+export const UI_BACKGROUND_MODE_REMOTE: string = "remote-notification";
+export const UI_BACKGROUND_MODE_PROCESSING: string = "processing";
+export const UI_BACKGROUND_MODE_FETCH: string = "fetch";
+export const BG_TASK_PREFIX: string = "cloud.MindBox.";
+export const BG_TASK_GD_APP_REFRESH_SUFFIX: string = ".GDAppRefresh";
+export const BG_TASK_GD_APP_PROCESSING_SUFFIX: string = ".GDAppProcessing";
+export const BG_TASK_DB_CLEAN_APP_PROCESSING_SUFFIX: string = ".DBCleanAppProcessing";
+export const IOS_IMPORT_MINDBOX_SDK: string = "import MindboxSdk";
+export const IOS_IMPORT_MINDBOX: string = "import Mindbox";
+export const IOS_LINE_SET_UN_CENTER_DELEGATE: string = "    UNUserNotificationCenter.current().delegate = self\n";
+export const IOS_LINE_CONFIGURE_MINDBOX_APP: string = "    MindboxApp.configure()\n";
+export const IOS_LINE_CALL_REQUEST_PERMISSIONS: string = "    onRequestPushNotifications()\n";
+export const IOS_METHOD_REQUEST_PERMISSIONS_SIGNATURE: string = "func onRequestPushNotifications(";
+export const IOS_METHOD_REQUEST_PERMISSIONS: string = `\n  public func onRequestPushNotifications() {\n      UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in\n        Mindbox.shared.notificationsRequestAuthorization(granted: granted)\n      }\n  }\n`;
+export const IOS_METHOD_USER_NOTIFICATION_CENTER_SIGNATURE: string = "func userNotificationCenter(_ center: UNUserNotificationCenter,";
+export const IOS_METHOD_USER_NOTIFICATION_CENTER: string = `\n  public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {\n      MindboxJsDelivery.emitEvent(response)\n      completionHandler()\n  }\n`;
+export const IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE: string = "UNUserNotificationCenterDelegate";
+export const POD_MINDBOX_LINE: string = "pod 'Mindbox', :git => 'https://github.com/mindbox-cloud/ios-sdk.git', :branch => 'develop'";
+export const POD_MINDBOX_LOGGER_LINE: string = "pod 'MindboxLogger', :git => 'https://github.com/mindbox-cloud/ios-sdk.git', :branch => 'develop'";
+export const POD_MINDBOX_COMMON_LINE: string = "pod 'MindboxCommon', '2.14.2'";
+export const PODFILE_ANCHOR_PREPARE_RN: string = "prepare_react_native_project!";
+
+

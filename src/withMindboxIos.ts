@@ -10,7 +10,7 @@ export const withMindboxIos: ConfigPlugin<MindboxPluginProps> = (config, props =
     config = withMindboxInfoPlist(config, props);
     config = withMindboxEntitlements(config, props);
     config = withMindboxAppDelegate(config, props);
-    config = withMindboxPodfile(config, props);
     config = withMindboxExtensions(config, props);
+    config = withMindboxPodfile(config, props);
     return config;
 }

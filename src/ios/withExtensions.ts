@@ -42,11 +42,17 @@ const withMindboxExtensions: ConfigPlugin<MindboxPluginProps> = (config, props =
             const sourceSwift = path.join(supportDir, IOS_NSE_FILENAME_DEFAULT);
             const sourcePlist = path.join(supportDir, IOS_NSE_INFO_PLIST_FILENAME);
             const sourceEntitlements = path.join(supportDir, IOS_NSE_ENTITLEMENTS_FILENAME);
-
-            writeIfChanged(
-                path.join(nseDir, IOS_NSE_FILENAME_DEFAULT),
-                fs.existsSync(sourceSwift) ? fs.readFileSync(sourceSwift, "utf8") : IOS_NSE_SWIFT_SOURCE
-            );
+            const customSwiftPath = props.iosNseFilePath
+                ? (path.isAbsolute(props.iosNseFilePath)
+                    ? props.iosNseFilePath
+                    : path.join(c.modRequest.projectRoot, props.iosNseFilePath))
+                : null;
+            const swiftContents = customSwiftPath && fs.existsSync(customSwiftPath)
+                ? fs.readFileSync(customSwiftPath, "utf8")
+                : (fs.existsSync(sourceSwift)
+                    ? fs.readFileSync(sourceSwift, "utf8")
+                    : IOS_NSE_SWIFT_SOURCE);
+            fs.writeFileSync(path.join(nseDir, IOS_NSE_FILENAME_DEFAULT), swiftContents, "utf8");
             writeIfChanged(
                 path.join(nseDir, IOS_NSE_INFO_PLIST_FILENAME),
                 fs.existsSync(sourcePlist) ? fs.readFileSync(sourcePlist, "utf8") : IOS_NSE_INFO_PLIST_SOURCE
@@ -123,10 +129,6 @@ function writeIfChanged(filePath: string, contents: string): void {
         if (current === contents) return;
     }
     fs.writeFileSync(filePath, contents, "utf8");
-}
-
-function getNseEntitlements(appGroupId: string): string {
-    return IOS_NSE_ENTITLEMENTS_PLIST_TEMPLATE.replace("__APP_GROUP_ID__", appGroupId);
 }
 
 type ConfigureNseTargetArgs = {
@@ -306,40 +308,4 @@ function findApplicationTargetUuid(project: any): string | null {
     return typeof first === 'string' ? first : first.uuid;
 }
 
-function addTargetDependency(project: any, fromTargetUuid: string, toTargetUuid: string): void {
-    try {
-        if (typeof project.addTargetDependency === 'function') {
-            project.addTargetDependency(fromTargetUuid, toTargetUuid);
-        } else {
-            const containerItemProxy = project.addObject({
-                isa: 'PBXContainerItemProxy',
-                containerPortal: project.getFirstProject().uuid,
-                proxyType: 1,
-                remoteGlobalIDString: toTargetUuid,
-                remoteInfo: IOS_NSE_PRODUCT_NAME
-            });
-            
-            const targetDependency = project.addObject({
-                isa: 'PBXTargetDependency',
-                target: toTargetUuid,
-                targetProxy: containerItemProxy
-            });
-
-            const nativeTargets = project.pbxNativeTargetSection();
-            for (const key in nativeTargets) {
-                const target = nativeTargets[key];
-                if (typeof target !== "object") continue;
-                if (target.uuid === fromTargetUuid || key === fromTargetUuid) {
-                    if (!target.dependencies) {
-                        target.dependencies = [];
-                    }
-                    target.dependencies.push({ value: targetDependency, comment: IOS_NSE_PRODUCT_NAME });
-                    break;
-                }
-            }
-        }
-    } catch (e) {
-        logWarning("addTargetDependency", "failed to add target dependency", { error: String(e) });
-    }
-}
 

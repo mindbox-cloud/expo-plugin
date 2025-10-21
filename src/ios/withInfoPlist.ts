@@ -20,7 +20,6 @@ const withMindboxInfoPlist: ConfigPlugin<MindboxPluginProps> = (config) => {
         const info = c.modResults as unknown as InfoPlistDictionary;
         addBackgroundModesToInfoPlist(info);
         addBackgroundTasksToInfoPlist(info, c.ios?.bundleIdentifier);
-        c.modResults = info as unknown as typeof c.modResults;
         return c;
     });
 };

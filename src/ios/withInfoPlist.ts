@@ -1,45 +1,77 @@
 import { ConfigPlugin, withInfoPlist } from "@expo/config-plugins";
 import type { MindboxPluginProps } from "../mindboxTypes";
-import { BG_TASK_DB_CLEAN_APP_PROCESSING_SUFFIX, BG_TASK_GD_APP_PROCESSING_SUFFIX, BG_TASK_GD_APP_REFRESH_SUFFIX, BG_TASK_PREFIX, INFO_PLIST_KEY_BG_TASKS, INFO_PLIST_KEY_UI_BACKGROUND_MODES, UI_BACKGROUND_MODE_FETCH, UI_BACKGROUND_MODE_PROCESSING, UI_BACKGROUND_MODE_REMOTE } from "../helpers/iosConstants";
+import { 
+    BG_TASK_DB_CLEAN_APP_PROCESSING_SUFFIX, 
+    BG_TASK_GD_APP_PROCESSING_SUFFIX, 
+    BG_TASK_GD_APP_REFRESH_SUFFIX, 
+    BG_TASK_PREFIX, 
+    INFO_PLIST_KEY_BG_TASKS, 
+    INFO_PLIST_KEY_UI_BACKGROUND_MODES, 
+    UI_BACKGROUND_MODE_FETCH, 
+    UI_BACKGROUND_MODE_PROCESSING, 
+    UI_BACKGROUND_MODE_REMOTE 
+} from "../helpers/iosConstants";
 import { logSuccess, logWarning } from "../utils/errorUtils";
+
+type InfoPlistDictionary = Record<string, unknown>;
 
 const withMindboxInfoPlist: ConfigPlugin<MindboxPluginProps> = (config) => {
     return withInfoPlist(config, (c) => {
-        const info = c.modResults as unknown as Record<string, unknown>;
-
-        const currentModes = Array.isArray((info as Record<string, unknown>)[INFO_PLIST_KEY_UI_BACKGROUND_MODES])
-            ? ((info as Record<string, unknown>)[INFO_PLIST_KEY_UI_BACKGROUND_MODES] as string[])
-            : [];
-        const requiredModes = [UI_BACKGROUND_MODE_REMOTE, UI_BACKGROUND_MODE_PROCESSING, UI_BACKGROUND_MODE_FETCH];
-        const mergedModes = Array.from(new Set([...currentModes, ...requiredModes]));
-        (info as Record<string, unknown>)[INFO_PLIST_KEY_UI_BACKGROUND_MODES] = mergedModes;
-
-        const currentTasks = Array.isArray((info as Record<string, unknown>)[INFO_PLIST_KEY_BG_TASKS])
-            ? ((info as Record<string, unknown>)[INFO_PLIST_KEY_BG_TASKS] as string[])
-            : [];
-        const bundleId = c.ios?.bundleIdentifier;
-        if (!bundleId) {
-            logWarning("withInfoPlist", "iOS bundleIdentifier is not defined; BGTask identifiers cannot be generated");
-        } else {
-            const base = `${BG_TASK_PREFIX}${bundleId}`;
-            const requiredTasks = [
-                `${base}${BG_TASK_GD_APP_REFRESH_SUFFIX}`,
-                `${base}${BG_TASK_GD_APP_PROCESSING_SUFFIX}`,
-                `${base}${BG_TASK_DB_CLEAN_APP_PROCESSING_SUFFIX}`,
-            ];
-            const mergedTasks = Array.from(new Set([...currentTasks, ...requiredTasks]));
-            (info as Record<string, unknown>)[INFO_PLIST_KEY_BG_TASKS] = mergedTasks;
-        }
-
+        const info = c.modResults as unknown as InfoPlistDictionary;
+        addBackgroundModesToInfoPlist(info);
+        addBackgroundTasksToInfoPlist(info, c.ios?.bundleIdentifier);
         c.modResults = info as unknown as typeof c.modResults;
-        logSuccess("withInfoPlist", {
-            addedBackgroundModes: requiredModes,
-            hasBundleId: Boolean(bundleId),
-        });
         return c;
     });
 };
 
+function getStringArrayFromPlist(plist: InfoPlistDictionary, key: string): string[] {
+    const value = plist[key];
+    return Array.isArray(value) ? (value as string[]) : [];
+}
+
+function mergeArraysUnique(existing: string[], toAdd: string[]): string[] {
+    return Array.from(new Set([...existing, ...toAdd]));
+}
+
+function addBackgroundModesToInfoPlist(info: InfoPlistDictionary): void {
+    const currentModes = getStringArrayFromPlist(info, INFO_PLIST_KEY_UI_BACKGROUND_MODES);
+    const requiredModes = [
+        UI_BACKGROUND_MODE_REMOTE, 
+        UI_BACKGROUND_MODE_PROCESSING, 
+        UI_BACKGROUND_MODE_FETCH
+    ];
+    const mergedModes = mergeArraysUnique(currentModes, requiredModes);
+    
+    info[INFO_PLIST_KEY_UI_BACKGROUND_MODES] = mergedModes;
+    logSuccess("add background modes to Info.plist", { modes: requiredModes });
+}
+
+function addBackgroundTasksToInfoPlist(
+    info: InfoPlistDictionary, 
+    bundleId: string | undefined
+): void {
+    if (!bundleId) {
+        logWarning("addBackgroundTasksToInfoPlist", "iOS bundleIdentifier is not defined; BGTask identifiers cannot be generated");
+        return;
+    }
+    const currentTasks = getStringArrayFromPlist(info, INFO_PLIST_KEY_BG_TASKS);
+    const requiredTasks = generateBGTaskIdentifiers(bundleId);
+    const mergedTasks = mergeArraysUnique(currentTasks, requiredTasks);
+    info[INFO_PLIST_KEY_BG_TASKS] = mergedTasks;
+    logSuccess("add background tasks to Info.plist", { 
+        bundleId, 
+        tasksCount: requiredTasks.length 
+    });
+}
+
+function generateBGTaskIdentifiers(bundleId: string): string[] {
+    const base = `${BG_TASK_PREFIX}${bundleId}`;
+    return [
+        `${base}${BG_TASK_GD_APP_REFRESH_SUFFIX}`,
+        `${base}${BG_TASK_GD_APP_PROCESSING_SUFFIX}`,
+        `${base}${BG_TASK_DB_CLEAN_APP_PROCESSING_SUFFIX}`,
+    ];
+}
+
 export default withMindboxInfoPlist;
-
-

@@ -42,8 +42,7 @@
           "androidChannelDescription": "expo_description",
           "smallIcon": "./assets/icon_mb.png",
           "smallIconAccentColor": "#80F00A0A",
-          "nativeRequestPermission": true,
-          "iosNseFilePath": "./assets/NotificationService.swift"
+          "nativeRequestPermission": "true"
         }
       ]
     ]

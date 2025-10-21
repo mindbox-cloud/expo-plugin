@@ -6,7 +6,7 @@ export const IOS_NSE_INFO_PLIST_FILENAME: string = "Info.plist";
 export const IOS_NCE_INFO_PLIST_FILENAME: string = "Info.plist";
 export const IOS_NSE_ENTITLEMENTS_FILENAME: string = "MindboxNotificationServiceExtension.entitlements";
 export const IOS_NCE_ENTITLEMENTS_FILENAME: string = "MindboxNotificationContentExtension.entitlements";
-export const IOS_MIN_DEPLOYMENT_TARGET_DEFAULT: string = "13.0";
+export const IOS_MIN_DEPLOYMENT_TARGET_DEFAULT: string = "15.1";
 export const APS_ENV_ENTITLEMENT_KEY: string = "aps-environment";
 export const ENTITLEMENT_APP_GROUPS_KEY: string = "com.apple.security.application-groups";
 export const ENTITLEMENT_GROUP_PREFIX: string = "group.cloud.Mindbox";
@@ -41,111 +41,6 @@ export const IOS_NSE_PRODUCT_NAME: string = "MindboxNotificationServiceExtension
 export const IOS_NCE_PRODUCT_BUNDLE_ID_SUFFIX: string = ".MindboxNotificationContentExtension";
 export const IOS_NCE_PRODUCT_NAME: string = "MindboxNotificationContentExtension";
 export const IOS_SWIFT_VERSION_DEFAULT: string = "5.0";
-
-export const IOS_NSE_SWIFT_SOURCE: string = `import UserNotifications
-import MindboxNotifications
-
-class NotificationService: UNNotificationServiceExtension {
-
-    lazy var mindboxService = MindboxNotificationService()
-
-    override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
-        mindboxService.didReceive(request, withContentHandler: contentHandler)
-    }
-
-    override func serviceExtensionTimeWillExpire() {
-        mindboxService.serviceExtensionTimeWillExpire()
-    }
-}
-`;
-
-export const IOS_NSE_INFO_PLIST_SOURCE: string = `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>CFBundleDevelopmentRegion</key>
-  <string>$(DEVELOPMENT_LANGUAGE)</string>
-  <key>CFBundleDisplayName</key>
-  <string>MindboxNotificationServiceExtension</string>
-  <key>CFBundleExecutable</key>
-  <string>$(EXECUTABLE_NAME)</string>
-  <key>CFBundleIdentifier</key>
-  <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-  <key>CFBundleInfoDictionaryVersion</key>
-  <string>6.0</string>
-  <key>CFBundleName</key>
-  <string>$(PRODUCT_NAME)</string>
-  <key>CFBundlePackageType</key>
-  <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
-  <key>CFBundleShortVersionString</key>
-  <string>1.0</string>
-  <key>CFBundleVersion</key>
-  <string>1</string>
-  <key>NSExtension</key>
-  <dict>
-    <key>NSExtensionPointIdentifier</key>
-    <string>com.apple.usernotifications.service</string>
-    <key>NSExtensionPrincipalClass</key>
-    <string>$(PRODUCT_MODULE_NAME).NotificationService</string>
-  </dict>
-</dict>
-</plist>`;
-
-export const IOS_NCE_SWIFT_SOURCE: string = `import UIKit
-import UserNotifications
-import UserNotificationsUI
-import MindboxNotifications
-
-class NotificationViewController: UIViewController, UNNotificationContentExtension {
-    
-    lazy var mindboxService = MindboxNotificationService()
-    
-    func didReceive(_ notification: UNNotification) {
-        mindboxService.didReceive(notification: notification, viewController: self, extensionContext: extensionContext)
-    }
-}`;
-
-export const IOS_NCE_INFO_PLIST_SOURCE: string = `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>CFBundleDevelopmentRegion</key>
-  <string>$(DEVELOPMENT_LANGUAGE)</string>
-  <key>CFBundleDisplayName</key>
-  <string>MindboxNotificationContentExtension</string>
-  <key>CFBundleExecutable</key>
-  <string>$(EXECUTABLE_NAME)</string>
-  <key>CFBundleIdentifier</key>
-  <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-  <key>CFBundleInfoDictionaryVersion</key>
-  <string>6.0</string>
-  <key>CFBundleName</key>
-  <string>$(PRODUCT_NAME)</string>
-  <key>CFBundlePackageType</key>
-  <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
-  <key>CFBundleShortVersionString</key>
-  <string>1.0</string>
-  <key>CFBundleVersion</key>
-  <string>1</string>
-  <key>NSExtension</key>
-  <dict>
-    <key>NSExtensionPointIdentifier</key>
-    <string>com.apple.usernotifications.content-extension</string>
-    <key>NSExtensionPrincipalClass</key>
-    <string>$(PRODUCT_MODULE_NAME).NotificationViewController</string>
-    <key>NSExtensionAttributes</key>
-    <dict>
-      <key>UNNotificationExtensionCategory</key>
-      <string>MindBoxCategoryIdentifier</string>
-      <key>UNNotificationExtensionInitialContentSizeRatio</key>
-      <real>0.0001</real>
-      <key>UNNotificationExtensionUserInteractionEnabled</key>
-      <string>1</string>
-    </dict>
-  </dict>
-  
-</dict>
-</plist>`;
 
 export const IOS_NCE_ENTITLEMENTS_PLIST_TEMPLATE: string = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">

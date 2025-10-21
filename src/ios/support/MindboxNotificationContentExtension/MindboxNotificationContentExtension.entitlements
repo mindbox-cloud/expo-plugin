@@ -6,7 +6,8 @@
   <array>
     <string>__APP_GROUP_ID__</string>
   </array>
+  <key>com.apple.security.app-sandbox</key>
+  <true/>
 </dict>
 </plist>
-
 

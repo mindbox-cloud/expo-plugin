@@ -1,5 +1,17 @@
 export const MINDBOX_PLUGIN_LOG_TAG = '[Mindbox Expo Plugin]';
 
+function logWithOptionalDetails(
+    logFn: typeof console.log | typeof console.warn,
+    message: string,
+    details?: Record<string, any>
+): void {
+    if (details) {
+        logFn(message, details);
+    } else {
+        logFn(message);
+    }
+}
+
 export const logError = (
     operation: string,
     error: Error | string,
@@ -7,12 +19,7 @@ export const logError = (
 ): void => {
     const errorMessage = error instanceof Error ? error.message : error;
     const logMessage = `${MINDBOX_PLUGIN_LOG_TAG} Failed to ${operation}: ${errorMessage}`;
-
-    if (details) {
-        console.warn(logMessage, details);
-    } else {
-        console.warn(logMessage);
-    }
+    logWithOptionalDetails(console.warn, logMessage, details);
 };
 
 export const logWarning = (
@@ -21,23 +28,15 @@ export const logWarning = (
     details?: Record<string, any>
 ): void => {
     const logMessage = `${MINDBOX_PLUGIN_LOG_TAG} Warning in ${operation}: ${message}`;
-
-    if (details) {
-        console.warn(logMessage, details);
-    } else {
-        console.warn(logMessage);
-    }
+    logWithOptionalDetails(console.warn, logMessage, details);
 };
 
 export const logSuccess = (
     operation: string,
     details?: Record<string, any>
 ): void => {
-    if (details) {
-        console.log(`${MINDBOX_PLUGIN_LOG_TAG} ${operation} completed successfully`, details);
-    } else {
-        console.log(`${MINDBOX_PLUGIN_LOG_TAG} ${operation} completed successfully`);
-    }
+    const logMessage = `${MINDBOX_PLUGIN_LOG_TAG} ${operation} completed successfully`;
+    logWithOptionalDetails(console.log, logMessage, details);
 };
 
 export const withErrorHandling = async <T>(

@@ -30,10 +30,10 @@ export const IOS_METHOD_REQUEST_PERMISSIONS: string = `\n  public func onRequest
 export const IOS_METHOD_USER_NOTIFICATION_CENTER_SIGNATURE: string = "func userNotificationCenter(_ center: UNUserNotificationCenter,";
 export const IOS_METHOD_USER_NOTIFICATION_CENTER: string = `\n  public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {\n      MindboxJsDelivery.emitEvent(response)\n      completionHandler()\n  }\n`;
 export const IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE: string = "UNUserNotificationCenterDelegate";
-export const POD_MINDBOX_LINE: string = "pod 'Mindbox', :git => 'https://github.com/mindbox-cloud/ios-sdk.git', :branch => 'develop'";
-export const POD_MINDBOX_LOGGER_LINE: string = "pod 'MindboxLogger', :git => 'https://github.com/mindbox-cloud/ios-sdk.git', :branch => 'develop'";
-export const POD_MINDBOX_COMMON_LINE: string = "pod 'MindboxCommon', '2.14.2'";
-export const POD_MINDBOX_NOTIFICATIONS_LINE: string = "pod 'MindboxNotifications', :git => 'https://github.com/mindbox-cloud/ios-sdk.git', :branch => 'develop'";
+export const POD_MINDBOX_LINE: string = "pod 'Mindbox'";
+export const POD_MINDBOX_LOGGER_LINE: string = "pod 'MindboxLogger'";
+export const POD_MINDBOX_COMMON_LINE: string = "pod 'MindboxCommon'";
+export const POD_MINDBOX_NOTIFICATIONS_LINE: string = "pod 'MindboxNotifications'";
 export const PODFILE_ANCHOR_PREPARE_RN: string = "prepare_react_native_project!";
 
 export const IOS_NSE_PRODUCT_BUNDLE_ID_SUFFIX: string = ".MindboxNotificationServiceExtension";

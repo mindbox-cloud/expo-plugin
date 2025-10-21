@@ -14,7 +14,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "mindbox.Example.Expo"
+      "bundleIdentifier": "mindbox.Example.Expo",
+      "appleTeamId": "622436AMYX"
     },
     "android": {
       "adaptiveIcon": {
@@ -41,7 +42,8 @@
           "androidChannelDescription": "expo_description",
           "smallIcon": "./assets/icon_mb.png",
           "smallIconAccentColor": "#80F00A0A",
-          "nativeRequestPermission": true
+          "nativeRequestPermission": true,
+          "iosNseFilePath": "./assets/NotificationService.swift"
         }
       ]
     ]

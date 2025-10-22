@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { withErrorHandling, logWarning, logSuccess } from "./errorUtils";
+import { withErrorHandling, logWarning, logSuccess } from "../../utils/errorUtils";
 
 const VALUES_DIR_NAME = "values";
 const STRINGS_FILE_NAME = "strings.xml";

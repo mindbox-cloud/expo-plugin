@@ -16,6 +16,13 @@ export type MindboxPluginProps = {
     androidChannelDescription?: string;
     smallIcon?: string;
     smallIconAccentColor?: string;
+    iosMode?: "development" | "production";
+    iosDevTeam?: string;
+    iosDeploymentTarget?: string;
+    iosNseFilePath?: string;
+    iosNceFilePath?: string;
+    iosAppGroupId?: string;
+    nativeRequestPermission?: boolean;
 };
 
 

@@ -6,6 +6,7 @@
   "files": [
     "build",
     "app.plugin.js",
+    "src/ios/support",
     "README.md",
     "LICENSE"
   ],

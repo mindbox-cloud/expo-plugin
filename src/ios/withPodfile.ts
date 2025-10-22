@@ -89,9 +89,7 @@ function insertMindboxPods(podfile: PodfileContent): PodfileContent {
 
 function insertPodsAfterTarget(podfile: PodfileContent, targetLineEnd: number): PodfileContent {
     const mindboxPodsBlock = [
-        POD_MINDBOX_LINE,
-        POD_MINDBOX_LOGGER_LINE,
-        POD_MINDBOX_COMMON_LINE
+        POD_MINDBOX_LINE
     ].map(line => `    ${line}`).join('\n') + '\n';
 
     const targetBlock = podfile.slice(targetLineEnd);

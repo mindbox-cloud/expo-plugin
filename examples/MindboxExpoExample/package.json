@@ -5,7 +5,7 @@
   "scripts": {
     "start": "expo start",
     "prebuildAndroid": "expo prebuild --platform android",
-    "prebuildIOS": "expo prebuild -p ios",
+    "prebuildIOS": "expo prebuild --platform ios",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "wipe": "rm -rf node_modules .expo .expo-shared dist build .turbo .next .cache android ios yarn.lock package-lock.json"

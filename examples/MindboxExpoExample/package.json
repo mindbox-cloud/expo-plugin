@@ -17,7 +17,7 @@
     "expo-build-properties": "~1.0.9",
     "expo-status-bar": "~3.0.8",
     "mindbox-expo-plugin": "file:../..",
-    "mindbox-sdk": "file:../../../react-native-app/react-native-sdk/mindbox-sdk-2.14.3.tgz",
+    "mindbox-sdk": "^2.14.3",
     "react": "19.1.0",
     "react-native": "0.81.4",
     "react-native-permissions": "^5.4.0",

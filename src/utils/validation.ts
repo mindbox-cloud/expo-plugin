@@ -14,7 +14,9 @@ const MINDBOX_PLUGIN_PROPS = [
   "iosNseFilePath",
   "iosNceFilePath",
   "iosMode",
-  "iosAppGroupId"
+  "iosAppGroupId",
+  "iosDeploymentTarget",
+  "iosDevTeam",
 ] as const;
 
 const VALID_ANDROID_PROVIDERS = ["firebase", "huawei", "rustore"] as const;
@@ -23,6 +25,15 @@ const VALID_IOS_MODES = ["development", "production"] as const;
 function validateStringProp(value: unknown, propName: string): void {
   if (value && typeof value !== "string") {
     throw new Error(`Mindbox Expo Plugin: '${propName}' must be a string.`);
+  }
+}
+
+function validateBooleanProp(value: unknown, propName: string): void {
+  if (value === undefined || value === null) {
+    return;
+  }
+  if (typeof value !== "boolean") {
+    throw new Error(`Mindbox Expo Plugin: '${propName}' must be a boolean.`);
   }
 }
 
@@ -82,6 +93,7 @@ export function validatePluginProps(props: MindboxPluginProps): void {
   validateStringProp(props.androidChannelDescription, "androidChannelDescription");
   validateStringProp(props.smallIcon, "smallIcon");
   validateStringProp(props.smallIconAccentColor, "smallIconAccentColor");
+  validateBooleanProp(props.nativeRequestPermission, "nativeRequestPermission");
   validateStringProp(props.iosNseFilePath, "iosNseFilePath");
   validateStringProp(props.iosNceFilePath, "iosNceFilePath");
   validateStringProp(props.iosAppGroupId, "iosAppGroupId");

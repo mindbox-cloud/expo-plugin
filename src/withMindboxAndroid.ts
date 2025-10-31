@@ -6,6 +6,7 @@ import { withHuawei } from "./android/withHuawei";
 import { withRustore } from "./android/withRustore";
 import { addMindboxDependencies } from "./android/withMindboxDependencies";
 import { withResources } from "./android/withResources";
+import { withExpoNotification } from "./android/withExpoNotification";
 
 export const withMindboxAndroid: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
     config = addMindboxDependencies(config, props);
@@ -26,7 +27,11 @@ export const withMindboxAndroid: ConfigPlugin<MindboxPluginProps> = (config, pro
         },
     ] as const;
 
-    return providerHandlers
+    config = providerHandlers
         .filter(({ provider }) => props.androidPushProviders?.includes(provider))
         .reduce((acc, { handler }) => handler(acc, props), config);
+    
+    config = withExpoNotification(config, props);
+
+    return config;
 };

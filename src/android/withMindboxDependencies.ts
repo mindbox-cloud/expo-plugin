@@ -12,12 +12,24 @@ export const addMindboxDependencies: ConfigPlugin<MindboxPluginProps> = (config,
     if (!props.androidPushProviders || props.androidPushProviders.length === 0) {
         return config;
     }
+    
+    const shouldRemoveFirebaseStarter = props.usedExpoNotification === true && props.androidPushProviders.includes("firebase");
+    const providersToAdd = shouldRemoveFirebaseStarter 
+        ? props.androidPushProviders.filter(provider => provider !== "firebase")
+        : props.androidPushProviders;
+    
+    if (providersToAdd.length === 0) {
+        return config;
+    }
+    
     return withAppBuildGradle(config, (buildGradle) => {
-        const dependencies = props.androidPushProviders!.map(provider => `    ${ANDROID_CONSTANTS.IMPLEMENTATION} '${libraryMap[provider as MindboxPushProvider]}'`).join('\n');
+        const contents = buildGradle.modResults.contents;
+        const dependencies = providersToAdd.map(provider => `    ${ANDROID_CONSTANTS.IMPLEMENTATION} '${libraryMap[provider as MindboxPushProvider]}'`).join('\n');
         buildGradle.modResults.contents = buildGradle.modResults.contents.replace(
             /(\s*)dependencies\s*\{/,
             `$1dependencies {\n${dependencies}`
         );
+
         return buildGradle;
     });
 };

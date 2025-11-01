@@ -17,6 +17,7 @@ const MINDBOX_PLUGIN_PROPS = [
   "iosAppGroupId",
   "iosDeploymentTarget",
   "iosDevTeam",
+  "usedExpoNotification",
 ] as const;
 
 const VALID_ANDROID_PROVIDERS = ["firebase", "huawei", "rustore"] as const;
@@ -94,6 +95,7 @@ export function validatePluginProps(props: MindboxPluginProps): void {
   validateStringProp(props.smallIcon, "smallIcon");
   validateStringProp(props.smallIconAccentColor, "smallIconAccentColor");
   validateBooleanProp(props.nativeRequestPermission, "nativeRequestPermission");
+  validateBooleanProp(props.usedExpoNotification, "usedExpoNotification");
   validateStringProp(props.iosNseFilePath, "iosNseFilePath");
   validateStringProp(props.iosNceFilePath, "iosNceFilePath");
   validateStringProp(props.iosAppGroupId, "iosAppGroupId");

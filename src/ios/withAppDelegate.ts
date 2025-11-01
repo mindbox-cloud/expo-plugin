@@ -3,14 +3,20 @@ import type { MindboxPluginProps } from "../mindboxTypes";
 import { 
     IOS_IMPORT_MINDBOX_SDK, 
     IOS_IMPORT_MINDBOX, 
+    IOS_IMPORT_EX_NOTIFICATIONS,
     IOS_LINE_SET_UN_CENTER_DELEGATE, 
+    IOS_LINE_SET_EXPO_CENTER_DELEGATE,
+    IOS_LINE_ADD_EXPO_NOTIFICATION_DELEGATE,
     IOS_LINE_CONFIGURE_MINDBOX_APP, 
+    IOS_LINE_CONFIGURE_MINDBOX_APP_WITH_OPTIONS,
     IOS_LINE_CALL_REQUEST_PERMISSIONS, 
     IOS_METHOD_REQUEST_PERMISSIONS, 
     IOS_METHOD_REQUEST_PERMISSIONS_SIGNATURE, 
     IOS_METHOD_USER_NOTIFICATION_CENTER, 
     IOS_METHOD_USER_NOTIFICATION_CENTER_SIGNATURE, 
-    IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE 
+    IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE,
+    IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE,
+    IOS_EXTENSION_NOTIFICATION_DELEGATE 
 } from "../helpers/iosConstants";
 import { logSuccess } from "../utils/errorUtils";
 
@@ -19,12 +25,11 @@ const CLASS_DECLARATION_REGEX = /(public\s+)?class\s+AppDelegate\s*:\s*([^\{\n]+
 const CLASS_BODY_REGEX = /(public\s+)?class\s+AppDelegate\b[^\{]*\{/;
 const DID_FINISH_LAUNCHING_REGEX = /(public\s+)?override\s+func\s+application\([\s\S]*?didFinishLaunchingWithOptions[\s\S]*?\)/;
 
-function addImports(contents: string): string {
-    if (contents.includes(IOS_IMPORT_MINDBOX_SDK)) {
-        return contents;
-    }
+function addImports(contents: string, useExpoNotifications: boolean): string {
     const match = contents.match(IMPORT_BLOCK_REGEX);
-    const mindboxImports = `${IOS_IMPORT_MINDBOX_SDK}\n${IOS_IMPORT_MINDBOX}\n`;
+    const baseImports = `${IOS_IMPORT_MINDBOX_SDK}\n${IOS_IMPORT_MINDBOX}\n`;
+    const extraExpo = useExpoNotifications ? `${IOS_IMPORT_EX_NOTIFICATIONS}\n` : "";
+    const mindboxImports = baseImports + extraExpo;
     if (match && match[0]) {
         const updated = contents.replace(IMPORT_BLOCK_REGEX, match[0] + mindboxImports);
         logSuccess("add Mindbox imports to AppDelegate");
@@ -100,7 +105,7 @@ function addLineIfMissing(methodBody: string, lineToCheck: string, lineToAdd: st
     return lineToAdd;
 }
 
-function ensureDidFinishLaunching(contents: string, nativeRequestPermission: boolean): string {
+function ensureDidFinishLaunching(contents: string, nativeRequestPermission: boolean, useExpoNotifications: boolean): string {
     const range = findDidFinishLaunchingMethod(contents);
     if (!range) {
         return contents;
@@ -108,16 +113,20 @@ function ensureDidFinishLaunching(contents: string, nativeRequestPermission: boo
     const { bodyStart, bodyEnd } = range;
     const methodBody = contents.slice(bodyStart, bodyEnd);
     const linesToInsert: string[] = [];
-    const delegateLine = addLineIfMissing(
-        methodBody, 
-        IOS_LINE_SET_UN_CENTER_DELEGATE, 
-        '\n' + IOS_LINE_SET_UN_CENTER_DELEGATE
-    );
-    if (delegateLine) linesToInsert.push(delegateLine);
+    if (useExpoNotifications) {
+        const expoDelegate = addLineIfMissing(methodBody, IOS_LINE_SET_EXPO_CENTER_DELEGATE, '\n' + IOS_LINE_SET_EXPO_CENTER_DELEGATE);
+        if (expoDelegate) linesToInsert.push(expoDelegate);
+        const expoAddDelegate = addLineIfMissing(methodBody, IOS_LINE_ADD_EXPO_NOTIFICATION_DELEGATE, IOS_LINE_ADD_EXPO_NOTIFICATION_DELEGATE);
+        if (expoAddDelegate) linesToInsert.push(expoAddDelegate);
+    } else {
+        const delegateLine = addLineIfMissing(methodBody, IOS_LINE_SET_UN_CENTER_DELEGATE, '\n' + IOS_LINE_SET_UN_CENTER_DELEGATE);
+        if (delegateLine) linesToInsert.push(delegateLine);
+    }
+
     const sdkLine = addLineIfMissing(
         methodBody, 
-        IOS_LINE_CONFIGURE_MINDBOX_APP, 
-        IOS_LINE_CONFIGURE_MINDBOX_APP
+        useExpoNotifications ? IOS_LINE_CONFIGURE_MINDBOX_APP_WITH_OPTIONS : IOS_LINE_CONFIGURE_MINDBOX_APP, 
+        useExpoNotifications ? IOS_LINE_CONFIGURE_MINDBOX_APP_WITH_OPTIONS : IOS_LINE_CONFIGURE_MINDBOX_APP
     );
     if (sdkLine) linesToInsert.push(sdkLine);
     if (nativeRequestPermission) {
@@ -173,13 +182,22 @@ function ensureUserNotificationCenterMethod(contents: string): string {
     );
 }
 
+function ensureExpoNotificationDelegateExtension(contents: string): string {
+    if (contents.includes(IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE)) {
+        return contents;
+    }
+    logSuccess("add NotificationDelegate extension to AppDelegate");
+    return contents + IOS_EXTENSION_NOTIFICATION_DELEGATE;
+}
+
 const withMindboxAppDelegate: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
     return withAppDelegate(config, (c) => {
         const language = c.modResults.language;
         if (language === "swift") {
             c.modResults.contents = applySwiftModifications(
                 c.modResults.contents as string,
-                Boolean(props.nativeRequestPermission)
+                Boolean(props.nativeRequestPermission),
+                Boolean(props.usedExpoNotification)
             );
             logSuccess("configure AppDelegate for Mindbox");
         } else if (language === "objc") {
@@ -191,16 +209,20 @@ const withMindboxAppDelegate: ConfigPlugin<MindboxPluginProps> = (config, props 
     });
 };
 
-function applySwiftModifications(contents: string, nativeRequestPermission: boolean): string {
+function applySwiftModifications(contents: string, nativeRequestPermission: boolean, useExpoNotifications: boolean): string {
     let modified = contents;
     
-    modified = addImports(modified);
+    modified = addImports(modified, useExpoNotifications);
     modified = extendClassInheritance(modified);
-    modified = ensureDidFinishLaunching(modified, nativeRequestPermission);
+    modified = ensureDidFinishLaunching(modified, nativeRequestPermission, useExpoNotifications);
     if (nativeRequestPermission) {
         modified = ensureRequestPermissionMethod(modified);
     }
-    modified = ensureUserNotificationCenterMethod(modified);
+    if (useExpoNotifications) {
+        modified = ensureExpoNotificationDelegateExtension(modified);
+    } else {
+        modified = ensureUserNotificationCenterMethod(modified);
+    }
     return modified;
 }
 

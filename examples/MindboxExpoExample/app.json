@@ -2,6 +2,11 @@
   "expo": {
     "name": "MindboxExpoExample",
     "slug": "MindboxExpoExample",
+    "extra": {
+      "eas": {
+        "projectId": "3e575d8d-05da-4a90-8b9e-623389bae0ad"
+      }
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,6 +27,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./credentials/google-services.json",
       "edgeToEdgeEnabled": true,
       "package": "com.example.MindboxExpoExample"
     },
@@ -42,9 +48,11 @@
           "androidChannelDescription": "expo_description",
           "smallIcon": "./assets/icon_mb.png",
           "smallIconAccentColor": "#80F00A0A",
-          "nativeRequestPermission": true
+          "iosMode": "production",
+          "usedExpoNotification": true
         }
-      ]
+      ],
+      ["expo-notifications"]
     ]
   }
 }

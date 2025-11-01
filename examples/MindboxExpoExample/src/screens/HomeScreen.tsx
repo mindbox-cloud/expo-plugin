@@ -41,7 +41,7 @@ async function registerForPushNotificationsAsync(): Promise<string | undefined> 
     const { status } = await Notifications.requestPermissionsAsync();
     finalStatus = status;
   }
-  if (finalStatus == 'granted') {
+  if (finalStatus === 'granted') {
     MindboxSdk.updateNotificationPermissionStatus(true)
   }
 

@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "MindboxExpoExample",
-    "slug": "MindboxExpoExample","extra": {
+    "slug": "MindboxExpoExample",
+    "extra": {
       "eas": {
         "projectId": "3e575d8d-05da-4a90-8b9e-623389bae0ad"
       }

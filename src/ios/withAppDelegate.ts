@@ -197,7 +197,7 @@ const withMindboxAppDelegate: ConfigPlugin<MindboxPluginProps> = (config, props 
             c.modResults.contents = applySwiftModifications(
                 c.modResults.contents as string,
                 Boolean(props.nativeRequestPermission),
-                Boolean((props as any).usedExpoNotification)
+                Boolean(props.usedExpoNotification)
             );
             logSuccess("configure AppDelegate for Mindbox");
         } else if (language === "objc") {

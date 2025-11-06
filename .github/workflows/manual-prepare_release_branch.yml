@@ -89,7 +89,7 @@ jobs:
           ##############################################################################
           echo "→ Inserting Unreleased section into CHANGELOG.md"
   
-          awk -v ver="$version" '
+          awk -v ver="$VERSION" '
             /^# Changelog/ {
               print
               print ""

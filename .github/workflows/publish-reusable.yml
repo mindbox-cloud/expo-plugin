@@ -1,4 +1,4 @@
-name: Publish expo plugin
+name: Publish reusable
 
 on:
   workflow_call:

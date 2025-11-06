@@ -1,6 +1,7 @@
 {
   "name": "mindbox-expo-plugin",
   "version": "1.0.0",
+  "target-version": "1.0.0",
   "main": "app.plugin.js",
   "react-native": "build/runtime/index.js",
   "types": "build/index.d.ts",
@@ -10,18 +11,26 @@
     "src/ios/support",
     "src/android/support",
     "README.md",
-    "LICENSE"
+    "LICENSE.md"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf build && tsc",
     "clean": "rimraf build",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "release": "release-it"
   },
   "keywords": [],
+  "repository": "https://github.com/mindbox-cloud/expo-plugin",
   "author": "",
-  "license": "ISC",
-  "description": "",
+  "license": "SEE LICENSE IN LICENCE.md",
+  "bugs": {
+    "url": "https://github.com/mindbox-cloud/expo-plugin/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "description": "Plugin for integration React Native Expo mobile apps with Mindbox",
   "exports": {
     ".": {
       "react-native": "./build/runtime/index.js",
@@ -29,13 +38,40 @@
     },
     "./runtime": "./build/runtime/index.js"
   },
+  "dependencies": {
+    "@expo/config-plugins": "^54.0.1"
+  },
   "devDependencies": {
-    "@expo/config-plugins": "^54.0.1",
     "@types/node": "^24.5.2",
     "eslint": "^9.36.0",
     "prettier": "^3.6.2",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "@release-it/conventional-changelog": "^2.0.0",
+    "@release-it/keep-a-changelog": "^2.3.0",
+    "release-it": "^14.2.2"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}",
+      "changelog": "npx auto-changelog --stdout --commit-limit false -u --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs",
+      "requireCleanWorkingDir": false
+    },
+    "hooks": {
+      "after:bump": "npx auto-changelog -p"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/keep-a-changelog": {
+        "filename": "CHANGELOG.md"
+      }
+    }
   }
 }

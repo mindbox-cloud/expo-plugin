@@ -1,0 +1,35 @@
+name: "Unpublish npm version"
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Version to unpublish (X.Y.Z or X.Y.Z-rc)"
+        required: true
+        type: string
+      package_name:
+        description: "NPM package name"
+        required: false
+        default: "mindbox-expo-plugin"
+        type: string
+
+jobs:
+  unpublish:
+    name: Unpublish from npm
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+        registry-url: https://registry.npmjs.org
+
+    - name: npm unpublish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_CICD_SECRET }}
+        PKG: ${{ github.event.inputs.package_name }}
+        VER: ${{ github.event.inputs.release_version }}
+      run: |
+        set -euo pipefail
+        echo "Unpublishing $PKG@$VER ..."
+        npm unpublish "$PKG@$VER" --force

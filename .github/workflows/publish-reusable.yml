@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       isRunable: ${{ fromJson(steps.package.outputs.content).version != fromJson(steps.package.outputs.content).target-version }}
-      newVersion: ${{ fromJson(steps.package.outputs.content).target-version }}
+      newVersion: ${{ fromJson(steps.package.outputs.content)['target-version'] }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -53,6 +53,7 @@ jobs:
     - name: Setup local environment
       run: yarn
     - name: Determine Pre-Release Status
+      id: prerelease_check
       run: |
         VERSION=${{ needs.checkingVersion.outputs.newVersion }}
         if [[ "$VERSION" == *"rc"* ]]; then

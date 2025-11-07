@@ -66,6 +66,8 @@ jobs:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_CICD_SECRET }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        yarn install
+        yarn build
         if [ ${{ steps.prerelease_check.outputs.is_prerelease }} == "true" ]; then
           yarn release ${{ needs.checkingVersion.outputs.newVersion }} --pre-release --no-plugins.@release-it/keep-a-changelog.strictLatest --ci
         else

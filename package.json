@@ -60,6 +60,7 @@
       "requireCleanWorkingDir": false
     },
     "hooks": {
+      "before:npm": "yarn build",
       "after:bump": "npx auto-changelog -p"
     },
     "npm": {

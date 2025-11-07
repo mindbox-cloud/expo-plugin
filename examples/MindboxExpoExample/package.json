@@ -19,7 +19,7 @@
     "expo-constants": "^18.0.10",
     "expo-device": "^8.0.9",
     "expo-notifications": "^0.32.12",
-    "mindbox-expo-plugin": "file:../..",
+    "mindbox-expo-plugin": "file:../../mindbox-expo-plugin-1.0.0.tgz",
     "mindbox-sdk": "^2.14.3",
     "react": "19.1.0",
     "react-native": "0.81.4",

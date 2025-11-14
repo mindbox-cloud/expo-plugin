@@ -7,6 +7,10 @@ on:
         required: true
         type: string
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   checkingVersion:
     name: Checking version
@@ -63,9 +67,9 @@ jobs:
         fi
     - name: Release
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_CICD_SECRET }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        npm install -g npm@latest
         yarn install
         yarn build
         if [ ${{ steps.prerelease_check.outputs.is_prerelease }} == "true" ]; then

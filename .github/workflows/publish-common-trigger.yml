@@ -1,4 +1,4 @@
-name: SDK publish
+name: 2. SDK publish RC manual or from master/support
 
 on:
   workflow_dispatch:

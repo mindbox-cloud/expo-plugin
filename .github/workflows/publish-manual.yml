@@ -5,6 +5,7 @@ on:
 
 jobs:
   check-branch:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Check if branch matches pattern

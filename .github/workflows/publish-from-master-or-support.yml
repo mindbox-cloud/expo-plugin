@@ -9,7 +9,8 @@ on:
 
 jobs:
   call-reusable:
-    if: ${{ github.event.pull_request.merged == true }}
+    if: false
+    # if: ${{ github.event.pull_request.merged == true }}
     uses: ./.github/workflows/publish-reusable.yml
     with:
       branch: ${{ github.base_ref }}

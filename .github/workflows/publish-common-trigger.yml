@@ -1,0 +1,33 @@
+name: SDK publish
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [closed]
+    branches:
+    - 'master'
+    - 'support/*'
+
+jobs:
+  check-branch-for-manual:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check if branch matches pattern
+      run: |
+        if ! echo "${{ github.ref_name }}" | grep -q "release/.*-rc"; then
+          echo "Branch name must match pattern 'release/*-rc'"
+          exit 1
+        fi
+
+  call-publish-reusable:
+    needs:
+    - check-branch-for-manual
+    if: |
+      always() && 
+      (needs.check-branch-for-manual.result == 'success' || needs.check-branch-for-manual.result == 'skipped') &&
+      (github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true)
+    uses: ./.github/workflows/publish-reusable.yml
+    with:
+      branch: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.base_ref }}
+    secrets: inherit

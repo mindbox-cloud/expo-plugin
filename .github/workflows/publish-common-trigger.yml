@@ -20,14 +20,17 @@ jobs:
           exit 1
         fi
 
-  call-publish-reusable:
-    needs:
-    - check-branch-for-manual
-    if: |
-      always() && 
-      (needs.check-branch-for-manual.result == 'success' || needs.check-branch-for-manual.result == 'skipped') &&
-      (github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true)
+  publish-manual:
+    if: github.event_name == 'workflow_dispatch'
+    needs: check-branch-for-manual
     uses: ./.github/workflows/publish-reusable.yml
     with:
-      branch: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.base_ref }}
+      branch: ${{ github.ref_name }}
+    secrets: inherit
+
+  publish-from-pr:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    uses: ./.github/workflows/publish-reusable.yml
+    with:
+      branch: ${{ github.base_ref }}
     secrets: inherit

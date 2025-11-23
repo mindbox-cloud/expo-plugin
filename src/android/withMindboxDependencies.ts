@@ -24,7 +24,12 @@ export const addMindboxDependencies: ConfigPlugin<MindboxPluginProps> = (config,
     
     return withAppBuildGradle(config, (buildGradle) => {
         const contents = buildGradle.modResults.contents;
-        const dependencies = providersToAdd.map(provider => `    ${ANDROID_CONSTANTS.IMPLEMENTATION} '${libraryMap[provider as MindboxPushProvider]}'`).join('\n');
+        const extraDependencies: string[] = [];
+        if (props.workRuntimeWorkaround === true) {
+            extraDependencies.push(`    ${ANDROID_CONSTANTS.IMPLEMENTATION} 'androidx.work:work-runtime-ktx:${ANDROID_CONSTANTS.WORK_RUNTIME_KTX_VERSION}'`);
+        }
+        const mindboxDependencies = providersToAdd.map(provider => `    ${ANDROID_CONSTANTS.IMPLEMENTATION} '${libraryMap[provider as MindboxPushProvider]}'`);
+        const dependencies = [...extraDependencies, ...mindboxDependencies].join('\n');
         buildGradle.modResults.contents = buildGradle.modResults.contents.replace(
             /(\s*)dependencies\s*\{/,
             `$1dependencies {\n${dependencies}`

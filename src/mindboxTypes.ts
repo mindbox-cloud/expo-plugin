@@ -23,7 +23,8 @@ export type MindboxPluginProps = {
     iosNceFilePath?: string;
     iosAppGroupId?: string;
     nativeRequestPermission?: boolean;
-    usedExpoNotification?: boolean
+    usedExpoNotification?: boolean;
+    workRuntimeWorkaround?: boolean;
 };
 
 

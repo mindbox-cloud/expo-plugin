@@ -1,7 +1,7 @@
 {
   "name": "mindbox-expo-plugin",
   "version": "1.0.0",
-  "target-version": "1.0.0",
+  "target-version": "1.0.6-rc",
   "main": "app.plugin.js",
   "react-native": "build/runtime/index.js",
   "types": "build/index.d.ts",

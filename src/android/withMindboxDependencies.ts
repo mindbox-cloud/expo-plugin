@@ -18,7 +18,8 @@ export const addMindboxDependencies: ConfigPlugin<MindboxPluginProps> = (config,
         ? props.androidPushProviders.filter(provider => provider !== "firebase")
         : props.androidPushProviders;
     
-    if (providersToAdd.length === 0) {
+    const shouldAddWorkaround = props.workRuntimeWorkaround === true;
+    if (providersToAdd.length === 0 && !shouldAddWorkaround) {
         return config;
     }
     

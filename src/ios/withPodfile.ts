@@ -9,6 +9,7 @@ type PodfileContent = string;
 
 const TARGET_REGEX = /^target\s+'[^']+'\s+do\s*\n/m;
 const USE_EXPO_MODULES_REGEX = /^\s*use_expo_modules!\s*$/m;
+const USE_FRAMEWORKS_REGEX = /^\s*use_frameworks!.*$/m;
 
 const withMindboxPodfile: ConfigPlugin<MindboxPluginProps> = (config) => {
     return withDangerousMod(config, [
@@ -60,7 +61,10 @@ function insertTargetIfMissing(
         return podfile;
     }
 
-    const insertion = `target '${targetName}' do\n  ${podLine}\nend\n\n`;
+    const frameworksMatch = podfile.match(USE_FRAMEWORKS_REGEX);
+    const frameworksLine = frameworksMatch ? `  ${frameworksMatch[0].trim()}\n` : "";
+
+    const insertion = `target '${targetName}' do\n${frameworksLine}  ${podLine}\nend\n\n`;
     logSuccess(logMessage);
     return podfile.slice(0, headerIdx) + insertion + podfile.slice(headerIdx);
 }
@@ -124,5 +128,6 @@ function insertMindboxContentTarget(podfile: PodfileContent): PodfileContent {
         "add NCE target to Podfile as separate target"
     );
 }
+
 
 

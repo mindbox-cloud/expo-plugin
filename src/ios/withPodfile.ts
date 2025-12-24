@@ -11,7 +11,16 @@ const TARGET_REGEX = /^target\s+'[^']+'\s+do\s*\n/m;
 const USE_EXPO_MODULES_REGEX = /^\s*use_expo_modules!\s*$/m;
 const USE_FRAMEWORKS_REGEX = /^\s*use_frameworks!.*$/m;
 
-const withMindboxPodfile: ConfigPlugin<MindboxPluginProps> = (config) => {
+const RESOURCE_BUNDLE_SIGNING_FIX = `
+    installer.pods_project.targets.each do |target|
+      if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
+        target.build_configurations.each do |config|
+            config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+        end
+      end
+    end`;
+
+const withMindboxPodfile: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
     return withDangerousMod(config, [
         "ios",
         async (c) => {
@@ -19,7 +28,7 @@ const withMindboxPodfile: ConfigPlugin<MindboxPluginProps> = (config) => {
             if (!fs.existsSync(podfilePath)) return c;
             
             const source = fs.readFileSync(podfilePath, "utf8");
-            const updated = applyPodfileTransformations(source);
+            const updated = applyPodfileTransformations(source, props);
             
             if (updated !== source) {
                 fs.writeFileSync(podfilePath, updated, "utf8");
@@ -32,12 +41,18 @@ const withMindboxPodfile: ConfigPlugin<MindboxPluginProps> = (config) => {
 
 export default withMindboxPodfile;
 
-function applyPodfileTransformations(podfile: PodfileContent): PodfileContent {
-    return [
+function applyPodfileTransformations(podfile: PodfileContent, props: MindboxPluginProps): PodfileContent {
+    const transformations = [
         insertMindboxNotificationsTarget,
         insertMindboxContentTarget,
-        insertMindboxPods
-    ].reduce((content, transform) => transform(content), podfile);
+        insertMindboxPods,
+    ];
+
+    if (!props.iosSkipResourceSigning) {
+        transformations.push(insertResourceBundleSigningFix);
+    }
+
+    return transformations.reduce((content, transform) => transform(content), podfile);
 }
 
 function insertTargetIfMissing(
@@ -127,6 +142,22 @@ function insertMindboxContentTarget(podfile: PodfileContent): PodfileContent {
         POD_MINDBOX_NOTIFICATIONS_LINE,
         "add NCE target to Podfile as separate target"
     );
+}
+
+function insertResourceBundleSigningFix(podfile: PodfileContent): PodfileContent {
+    if (podfile.includes("CODE_SIGNING_ALLOWED'] = 'NO'")) {
+        return podfile;
+    }
+
+    const postInstallRegex = /post_install\s+do\s+\|installer\|/;
+    
+    if (postInstallRegex.test(podfile)) {
+        logSuccess("add resource bundle signing fix to existing post_install");
+        return podfile.replace(postInstallRegex, `post_install do |installer|\n${RESOURCE_BUNDLE_SIGNING_FIX}`);
+    }
+
+    logSuccess("add resource bundle signing fix to new post_install");
+    return `${podfile}\n\npost_install do |installer|\n${RESOURCE_BUNDLE_SIGNING_FIX}\nend`;
 }
 
 

@@ -149,11 +149,15 @@ function insertResourceBundleSigningFix(podfile: PodfileContent): PodfileContent
         return podfile;
     }
 
-    const postInstallRegex = /post_install\s+do\s+\|installer\|/;
+    const postInstallRegex = /post_install\s+do\s+\|([^|]+)\|/;
     
-    if (postInstallRegex.test(podfile)) {
+    const match = podfile.match(postInstallRegex);
+    if (match) {
         logSuccess("add resource bundle signing fix to existing post_install");
-        return podfile.replace(postInstallRegex, `post_install do |installer|\n${RESOURCE_BUNDLE_SIGNING_FIX}`);
+        const installerVarName = match[1];
+        // Replace 'installer' in our fix with the actual variable name used in the Podfile
+        const fixWithCorrectVar = RESOURCE_BUNDLE_SIGNING_FIX.replace(/installer/g, installerVarName);
+        return podfile.replace(match[0], `${match[0]}\n${fixWithCorrectVar}`);
     }
 
     logSuccess("add resource bundle signing fix to new post_install");

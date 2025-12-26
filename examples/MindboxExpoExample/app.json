@@ -2,26 +2,33 @@
   "expo": {
     "name": "MindboxExpoExample",
     "slug": "MindboxExpoExample",
-    "extra": {
-      "eas": {
-        "projectId": "3e575d8d-05da-4a90-8b9e-623389bae0ad"
-      }
-    },
+    "owner": "utekeshev.a",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "mindbox.Example.Expo",
-      "appleTeamId": "622436AMYX"
+      "bundleIdentifier": "mindbox.Example.Expo996",
+      "appleTeamId": "HY3R3228Q3",
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.com.mindbox.example.expo996"
+        ]
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -31,6 +38,29 @@
       "edgeToEdgeEnabled": true,
       "package": "com.example.MindboxExpoExample"
     },
+
+    "extra": {
+      "eas": {
+        "projectId": "5f9a740d-5244-4286-a660-291e25167f0e",
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "MindboxNotificationServiceExtension",
+                  "bundleIdentifier": "mindbox.Example.Expo996.MindboxNotificationServiceExtension"
+                },
+                {
+                  "targetName": "MindboxNotificationContentExtension",
+                  "bundleIdentifier": "mindbox.Example.Expo996.MindboxNotificationContentExtension"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+
     "plugins": [
       [
         "mindbox-expo-plugin",
@@ -49,10 +79,34 @@
           "smallIcon": "./assets/icon_mb.png",
           "smallIconAccentColor": "#80F00A0A",
           "iosMode": "production",
-          "usedExpoNotification": true
+          "usedExpoNotification": true,
+          "iosAppGroupId": "group.com.mindbox.example.expo996"
         }
       ],
-      ["expo-notifications"]
+      ["expo-notifications"],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "appExtensions": {
+              "MindboxNotificationServiceExtension": {
+                "entitlements": {
+                  "com.apple.security.application-groups": [
+                    "group.com.mindbox.example.expo996"
+                  ]
+                }
+              },
+              "MindboxNotificationContentExtension": {
+                "entitlements": {
+                  "com.apple.security.application-groups": [
+                    "group.com.mindbox.example.expo996"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
     ]
   }
 }

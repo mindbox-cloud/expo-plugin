@@ -4,7 +4,33 @@
     "slug": "MindboxExpoExample",
     "extra": {
       "eas": {
-        "projectId": "3e575d8d-05da-4a90-8b9e-623389bae0ad"
+        "projectId": "3e575d8d-05da-4a90-8b9e-623389bae0ad",
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "MindboxNotificationServiceExtension",
+                  "bundleIdentifier": "mindbox.Example.Expo.MindboxNotificationServiceExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.cloud.Mindbox.mindbox.Example.Expo"
+                    ]
+                  }
+                },
+                {
+                  "targetName": "MindboxNotificationContentExtension",
+                  "bundleIdentifier": "mindbox.Example.Expo.MindboxNotificationContentExtension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.cloud.Mindbox.mindbox.Example.Expo"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
       }
     },
     "version": "1.0.0",
@@ -20,7 +46,15 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "mindbox.Example.Expo",
-      "appleTeamId": "622436AMYX"
+      "appleTeamId": "622436AMYX",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.cloud.Mindbox.mindbox.Example.Expo"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -52,7 +86,9 @@
           "usedExpoNotification": true
         }
       ],
-      ["expo-notifications"]
+      [
+        "expo-notifications"
+      ]
     ]
   }
 }

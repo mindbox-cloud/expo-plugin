@@ -11,15 +11,6 @@ const TARGET_REGEX = /^target\s+'[^']+'\s+do\s*\n/m;
 const USE_EXPO_MODULES_REGEX = /^\s*use_expo_modules!\s*$/m;
 const USE_FRAMEWORKS_LINE = "  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']";
 
-const RESOURCE_BUNDLE_SIGNING_FIX = `
-    installer.pods_project.targets.each do |target|
-      if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
-        target.build_configurations.each do |config|
-            config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
-        end
-      end
-    end`;
-
 const withMindboxPodfile: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
     return withDangerousMod(config, [
         "ios",
@@ -47,10 +38,6 @@ function applyPodfileTransformations(podfile: PodfileContent, props: MindboxPlug
         insertMindboxContentTarget,
         insertMindboxPods,
     ];
-
-    if (!props.iosSkipResourceSigning) {
-        transformations.push(insertResourceBundleSigningFix);
-    }
 
     return transformations.reduce((content, transform) => transform(content), podfile);
 }
@@ -139,26 +126,6 @@ function insertMindboxContentTarget(podfile: PodfileContent): PodfileContent {
         POD_MINDBOX_NOTIFICATIONS_LINE,
         "add NCE target to Podfile as separate target"
     );
-}
-
-function insertResourceBundleSigningFix(podfile: PodfileContent): PodfileContent {
-    if (podfile.includes("CODE_SIGNING_ALLOWED'] = 'NO'")) {
-        return podfile;
-    }
-
-    const postInstallRegex = /post_install\s+do\s+\|([^|]+)\|/;
-    
-    const match = podfile.match(postInstallRegex);
-    if (match) {
-        logSuccess("add resource bundle signing fix to existing post_install");
-        const installerVarName = match[1];
-        // Replace 'installer' in our fix with the actual variable name used in the Podfile
-        const fixWithCorrectVar = RESOURCE_BUNDLE_SIGNING_FIX.replace(/installer/g, installerVarName);
-        return podfile.replace(match[0], `${match[0]}\n${fixWithCorrectVar}`);
-    }
-
-    logSuccess("add resource bundle signing fix to new post_install");
-    return `${podfile}\n\npost_install do |installer|\n${RESOURCE_BUNDLE_SIGNING_FIX}\nend`;
 }
 
 

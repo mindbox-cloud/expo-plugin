@@ -4,33 +4,7 @@
     "slug": "MindboxExpoExample",
     "extra": {
       "eas": {
-        "projectId": "3e575d8d-05da-4a90-8b9e-623389bae0ad",
-        "build": {
-          "experimental": {
-            "ios": {
-              "appExtensions": [
-                {
-                  "targetName": "MindboxNotificationServiceExtension",
-                  "bundleIdentifier": "mindbox.Example.Expo.MindboxNotificationServiceExtension",
-                  "entitlements": {
-                    "com.apple.security.application-groups": [
-                      "group.cloud.Mindbox.mindbox.Example.Expo"
-                    ]
-                  }
-                },
-                {
-                  "targetName": "MindboxNotificationContentExtension",
-                  "bundleIdentifier": "mindbox.Example.Expo.MindboxNotificationContentExtension",
-                  "entitlements": {
-                    "com.apple.security.application-groups": [
-                      "group.cloud.Mindbox.mindbox.Example.Expo"
-                    ]
-                  }
-                }
-              ]
-            }
-          }
-        }
+        "projectId": "3e575d8d-05da-4a90-8b9e-623389bae0ad"
       }
     },
     "version": "1.0.0",
@@ -49,11 +23,6 @@
       "appleTeamId": "622436AMYX",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      },
-      "entitlements": {
-        "com.apple.security.application-groups": [
-          "group.cloud.Mindbox.mindbox.Example.Expo"
-        ]
       }
     },
     "android": {
@@ -88,6 +57,14 @@
       ],
       [
         "expo-notifications"
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
       ]
     ]
   }

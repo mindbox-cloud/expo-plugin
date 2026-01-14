@@ -9,7 +9,7 @@ type PodfileContent = string;
 
 const TARGET_REGEX = /^target\s+'[^']+'\s+do\s*\n/m;
 const USE_EXPO_MODULES_REGEX = /^\s*use_expo_modules!\s*$/m;
-const USE_FRAMEWORKS_REGEX = /^\s*use_frameworks!.*$/m;
+const USE_FRAMEWORKS_LINE = "  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']";
 
 const RESOURCE_BUNDLE_SIGNING_FIX = `
     installer.pods_project.targets.each do |target|
@@ -76,10 +76,7 @@ function insertTargetIfMissing(
         return podfile;
     }
 
-    const frameworksMatch = podfile.match(USE_FRAMEWORKS_REGEX);
-    const frameworksLine = frameworksMatch ? `  ${frameworksMatch[0].trim()}\n` : "";
-
-    const insertion = `target '${targetName}' do\n${frameworksLine}  ${podLine}\nend\n\n`;
+    const insertion = `target '${targetName}' do\n${USE_FRAMEWORKS_LINE}\n  ${podLine}\nend\n\n`;
     logSuccess(logMessage);
     return podfile.slice(0, headerIdx) + insertion + podfile.slice(headerIdx);
 }

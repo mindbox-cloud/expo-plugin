@@ -3,7 +3,6 @@ import type { MindboxPluginProps } from "../mindboxTypes";
 import * as fs from "fs";
 import * as path from "path";
 import { POD_MINDBOX_LINE, POD_MINDBOX_LOGGER_LINE, POD_MINDBOX_COMMON_LINE, POD_MINDBOX_NOTIFICATIONS_LINE, PODFILE_ANCHOR_PREPARE_RN, IOS_TARGET_NSE_NAME, IOS_TARGET_NCE_NAME } from "../helpers/iosConstants";
-import { logSuccess } from "../utils/errorUtils";
 
 type PodfileContent = string;
 
@@ -23,7 +22,6 @@ const withMindboxPodfile: ConfigPlugin<MindboxPluginProps> = (config, props = {}
             
             if (updated !== source) {
                 fs.writeFileSync(podfilePath, updated, "utf8");
-                logSuccess("configure Podfile for Mindbox");
             }
             return c;
         },
@@ -64,7 +62,6 @@ function insertTargetIfMissing(
     }
 
     const insertion = `target '${targetName}' do\n${USE_FRAMEWORKS_LINE}\n  ${podLine}\nend\n\n`;
-    logSuccess(logMessage);
     return podfile.slice(0, headerIdx) + insertion + podfile.slice(headerIdx);
 }
 
@@ -101,12 +98,10 @@ function insertPodsAfterTarget(podfile: PodfileContent, targetLineEnd: number): 
     if (useExpoMatch) {
         const useExpoIdx = targetLineEnd + targetBlock.search(USE_EXPO_MODULES_REGEX);
         const useExpoLineEnd = podfile.indexOf("\n", useExpoIdx) + 1;
-        logSuccess("add Mindbox pods to main target after use_expo_modules!");
         return podfile.slice(0, useExpoLineEnd) + mindboxPodsBlock + podfile.slice(useExpoLineEnd);
     }
     
     const insertion = `  use_expo_modules!\n${mindboxPodsBlock}`;
-    logSuccess("add Mindbox pods to main target");
     return podfile.slice(0, targetLineEnd) + insertion + podfile.slice(targetLineEnd);
 }
 

@@ -18,7 +18,6 @@ import {
     IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE,
     IOS_EXTENSION_NOTIFICATION_DELEGATE 
 } from "../helpers/iosConstants";
-import { logSuccess } from "../utils/errorUtils";
 
 const IMPORT_BLOCK_REGEX = /^(import\s+.*\n)+/;
 const CLASS_DECLARATION_REGEX = /(public\s+)?class\s+AppDelegate\s*:\s*([^\{\n]+)/;
@@ -32,10 +31,8 @@ function addImports(contents: string, useExpoNotifications: boolean): string {
     const mindboxImports = baseImports + extraExpo;
     if (match && match[0]) {
         const updated = contents.replace(IMPORT_BLOCK_REGEX, match[0] + mindboxImports);
-        logSuccess("add Mindbox imports to AppDelegate");
         return updated;
     }
-    logSuccess("add Mindbox imports to AppDelegate");
     return mindboxImports + contents;
 }
 
@@ -52,7 +49,6 @@ function extendClassInheritance(contents: string): string {
         match[2], 
         `${currentInheritance}, ${IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE} `
     );
-    logSuccess("extend AppDelegate inheritance with UNUserNotificationCenterDelegate");
     return contents.replace(CLASS_DECLARATION_REGEX, updatedDeclaration);
 }
 
@@ -141,7 +137,6 @@ function ensureDidFinishLaunching(contents: string, nativeRequestPermission: boo
         return contents;
     }
     const updatedMethodBody = linesToInsert.join("") + methodBody;
-    logSuccess("add Mindbox initialization lines to didFinishLaunchingWithOptions");
     return contents.slice(0, bodyStart) + updatedMethodBody + contents.slice(bodyEnd);
 }
 
@@ -160,7 +155,6 @@ function addMethodToClass(
     if (classBody.includes(methodSignature)) {
         return contents;
     }
-    logSuccess(logMessage);
     return contents.slice(0, bodyEnd) + `\n${methodToAdd}` + contents.slice(bodyEnd);
 }
 
@@ -186,7 +180,6 @@ function ensureExpoNotificationDelegateExtension(contents: string): string {
     if (contents.includes(IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE)) {
         return contents;
     }
-    logSuccess("add NotificationDelegate extension to AppDelegate");
     return contents + IOS_EXTENSION_NOTIFICATION_DELEGATE;
 }
 
@@ -199,7 +192,6 @@ const withMindboxAppDelegate: ConfigPlugin<MindboxPluginProps> = (config, props 
                 Boolean(props.nativeRequestPermission),
                 Boolean(props.usedExpoNotification)
             );
-            logSuccess("configure AppDelegate for Mindbox");
         } else if (language === "objc") {
             console.warn("Objective-C AppDelegate modification not yet supported");
         } else {

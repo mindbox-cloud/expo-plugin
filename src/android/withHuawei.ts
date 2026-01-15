@@ -1,7 +1,7 @@
 import { AndroidConfig, ConfigPlugin, withAndroidManifest, withAppBuildGradle, withDangerousMod, withProjectBuildGradle } from "@expo/config-plugins";
 import type { MindboxPluginProps } from "../mindboxTypes";
 import { ANDROID_CONSTANTS } from "../helpers/androidConstants";
-import { copyServiceJsonFile, addMavenRepository, addClasspathDependency, addPluginToGradle, addManifestMetaData, extractPackageName, extractAppIdFromAgc, withErrorHandling, logSuccess, logWarning } from "./utils";
+import { copyServiceJsonFile, addMavenRepository, addClasspathDependency, addPluginToGradle, addManifestMetaData, extractPackageName, extractAppIdFromAgc, withErrorHandling, logWarning } from "./utils";
 import * as path from "path";
 
 export const withHuawei: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
@@ -43,7 +43,6 @@ export const withHuawei: ConfigPlugin<MindboxPluginProps> = (config, props = {})
             value,
             "value"
         );
-        logSuccess("ensure Huawei appid meta-data in AndroidManifest.xml");
         return manifestConfig;
     });
     config = withProjectBuildGradle(config, (buildGradle) => {

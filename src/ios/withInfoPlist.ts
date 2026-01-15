@@ -11,7 +11,7 @@ import {
     UI_BACKGROUND_MODE_PROCESSING, 
     UI_BACKGROUND_MODE_REMOTE 
 } from "../helpers/iosConstants";
-import { logSuccess, logWarning } from "../utils/errorUtils";
+import { logWarning } from "../utils/errorUtils";
 
 type InfoPlistDictionary = Record<string, unknown>;
 
@@ -43,7 +43,6 @@ function addBackgroundModesToInfoPlist(info: InfoPlistDictionary): void {
     const mergedModes = mergeArraysUnique(currentModes, requiredModes);
     
     info[INFO_PLIST_KEY_UI_BACKGROUND_MODES] = mergedModes;
-    logSuccess("add background modes to Info.plist", { modes: requiredModes });
 }
 
 function addBackgroundTasksToInfoPlist(
@@ -58,10 +57,6 @@ function addBackgroundTasksToInfoPlist(
     const requiredTasks = generateBGTaskIdentifiers(bundleId);
     const mergedTasks = mergeArraysUnique(currentTasks, requiredTasks);
     info[INFO_PLIST_KEY_BG_TASKS] = mergedTasks;
-    logSuccess("add background tasks to Info.plist", { 
-        bundleId, 
-        tasksCount: requiredTasks.length 
-    });
 }
 
 function generateBGTaskIdentifiers(bundleId: string): string[] {

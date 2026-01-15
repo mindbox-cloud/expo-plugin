@@ -1,6 +1,6 @@
 import { ConfigPlugin, withAndroidManifest, withDangerousMod } from "@expo/config-plugins";
 import type { MindboxPluginProps } from "../mindboxTypes";
-import { addManifestMetaData, withErrorHandling, logSuccess, logWarning } from "./utils";
+import { addManifestMetaData, withErrorHandling, logWarning } from "./utils";
 import { copyNotificationIcon, writeMindboxStringsResources, writeMindboxColorResource } from "./utils/resourceUtils";
 
 export const withResources: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {

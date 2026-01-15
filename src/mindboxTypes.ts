@@ -24,7 +24,6 @@ export type MindboxPluginProps = {
     iosAppGroupId?: string;
     nativeRequestPermission?: boolean;
     usedExpoNotification?: boolean;
-    iosSkipResourceSigning?: boolean;
 };
 
 

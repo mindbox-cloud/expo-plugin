@@ -22,7 +22,7 @@ import {
     IOS_MIN_DEPLOYMENT_TARGET_DEFAULT,
     ENTITLEMENT_GROUP_PREFIX,
 } from "../helpers/iosConstants";
-import { logSuccess, logWarning } from "../utils/errorUtils";
+import { logWarning } from "../utils/errorUtils";
 
 const XCODE_PLUGINS_FOLDER = 13;
 
@@ -80,7 +80,6 @@ const withMindboxExtensions: ConfigPlugin<MindboxPluginProps> = (config, props =
                 frameworks: ["UserNotifications.framework", "UserNotificationsUI.framework"],
             });
 
-            logSuccess("configure extensions for Mindbox", { appBundleId });
             return c;
         } catch (e) {
             logWarning("withExtensions", "Unable to configure Notification Extensions", { error: String(e) });
@@ -258,7 +257,6 @@ function configureExtensionTarget(project: any, args: ExtensionTargetConfig): vo
     try {
         const existing = findTargetByName(project, args.targetName);
         if (existing) {
-            logSuccess(`${args.targetName} target already exists`);
             return;
         }
 
@@ -270,8 +268,6 @@ function configureExtensionTarget(project: any, args: ExtensionTargetConfig): vo
         addSourceFiles(project, group.uuid, targetUuid, args);
         configureBuildSettings(project, targetUuid, args);
         embedExtensionInApp(project, targetUuid, args.productName);
-        
-        logSuccess(`configured ${args.targetName} target`);
     } catch (e) {
         logWarning(`configure${args.targetName}`, "failed to create extension target", { error: String(e) });
     }
@@ -448,16 +444,12 @@ function addFileToGroup(project: any, fileName: string, groupUuid: string): stri
         sourceTree: '"<group>"'
     };
     fileReferenceSection[`${fileUuid}_comment`] = fileName;
-    logSuccess("addFileToGroup: created PBXFileReference", { fileName, fileUuid });
     
     const group = groupSection[groupUuid];
     if (group && group.children) {
         const alreadyInGroup = group.children.find((c: any) => c.value === fileUuid);
         if (!alreadyInGroup) {
             group.children.push({ value: fileUuid, comment: fileName });
-            logSuccess("addFileToGroup: added to group.children", { groupUuid, fileName, fileRef: fileUuid });
-        } else {
-            logSuccess("addFileToGroup: already in group.children", { groupUuid, fileName });
         }
     } else {
         logWarning("addFileToGroup", "Group not found or has no children", { groupUuid });

@@ -1,7 +1,7 @@
 import { ConfigPlugin, withAndroidManifest, withProjectBuildGradle } from "@expo/config-plugins";
 import type { MindboxPluginProps } from "../mindboxTypes";
 import { ANDROID_CONSTANTS } from "../helpers/androidConstants";
-import { addMavenRepository, addManifestMetaData, logWarning, logSuccess } from "./utils";
+import { addMavenRepository, addManifestMetaData, logWarning } from "./utils";
 
 export const withRustore: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
     config = withProjectBuildGradle(config, (buildGradle) => {
@@ -26,7 +26,6 @@ export const withRustore: ConfigPlugin<MindboxPluginProps> = (config, props = {}
             "value"
         );
 
-        logSuccess("add RuStore project ID meta-data to AndroidManifest.xml");
         return manifestConfig;
     });
 

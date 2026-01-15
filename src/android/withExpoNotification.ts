@@ -13,7 +13,6 @@ import {
     ensureToolsNamespace,
     withErrorHandling,
     logWarning,
-    logSuccess,
 } from "./utils";
 import * as path from "path";
 import * as fs from "fs";
@@ -202,10 +201,6 @@ export const withExpoNotification: ConfigPlugin<MindboxPluginProps> = (
                     const packageStatement = `package ${packageName}\n\n`;
                     const targetContent = packageStatement + sourceContent;
                     writeIfChanged(targetFilePath, targetContent);
-                    logSuccess("write MindboxExpoFirebaseService.kt", {
-                        targetPath: targetFilePath,
-                        packageName,
-                    });
                 },
             );
 
@@ -252,7 +247,6 @@ export const withExpoNotification: ConfigPlugin<MindboxPluginProps> = (
             { action: "com.google.firebase.MESSAGING_EVENT" },
         ]);
 
-        logSuccess("add services to AndroidManifest.xml");
         return manifestConfig;
     });
 
@@ -272,9 +266,6 @@ export const withExpoNotification: ConfigPlugin<MindboxPluginProps> = (
             /(\s*)dependencies\s*\{/,
             `$1dependencies {\n${lines}`,
         );
-        logSuccess("add Expo Notification dependencies to build.gradle", {
-            added: missing,
-        });
         return buildGradle;
     });
 

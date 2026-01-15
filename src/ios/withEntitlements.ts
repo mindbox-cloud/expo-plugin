@@ -6,7 +6,7 @@ import {
     ENTITLEMENT_GROUP_DEFAULT, 
     ENTITLEMENT_GROUP_PREFIX 
 } from "../helpers/iosConstants";
-import { logSuccess, logWarning } from "../utils/errorUtils";
+import { logWarning } from "../utils/errorUtils";
 
 type EntitlementsDictionary = Record<string, unknown>;
 type ApsEnvironment = "production" | "development";
@@ -18,13 +18,6 @@ const withMindboxEntitlements: ConfigPlugin<MindboxPluginProps> = (config, props
         
         setApsEnvironment(entitlements, props.iosMode);
         setAppGroups(entitlements, bundleId, props.iosAppGroupId);
-        
-        logSuccess("configure entitlements for Mindbox", { 
-            aps: entitlements[APS_ENV_ENTITLEMENT_KEY], 
-            appGroups: entitlements[ENTITLEMENT_APP_GROUPS_KEY],
-            bundleId
-        });
-        
         return c;
     });
 };

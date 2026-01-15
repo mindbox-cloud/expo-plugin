@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import { logSuccess } from "../../utils/errorUtils";
 
 export const copyServiceJsonFile = async (
     sourcePath: string,
@@ -22,13 +21,10 @@ export const copyServiceJsonFile = async (
         if (fs.existsSync(targetPath)) {
             const existing = fs.readFileSync(targetPath, { encoding: "utf8" });
             if (existing.trim() === sourceJson.trim()) {
-                logSuccess(`check ${fileName}`, { status: "already up to date" });
                 return;
             }
         }
         fs.writeFileSync(targetPath, sourceJson, { encoding: "utf8" });
-        logSuccess(`write ${fileName}`);
-
     } catch (error) {
         throw new Error(`Failed to copy ${fileName}: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -52,13 +48,10 @@ export const copyKotlinFile = async (
         if (fs.existsSync(targetPath)) {
             const existing = fs.readFileSync(targetPath, { encoding: "utf8" });
             if (existing.trim() === sourceContent.trim()) {
-                logSuccess(`check ${fileName}`, { status: "already up to date" });
                 return;
             }
         }
         fs.writeFileSync(targetPath, sourceContent, { encoding: "utf8" });
-        logSuccess(`write ${fileName}`);
-
     } catch (error) {
         throw new Error(`Failed to copy ${fileName}: ${error instanceof Error ? error.message : String(error)}`);
     }

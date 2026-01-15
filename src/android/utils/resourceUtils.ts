@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { withErrorHandling, logWarning, logSuccess } from "../../utils/errorUtils";
+import { withErrorHandling, logWarning } from "../../utils/errorUtils";
 
 const VALUES_DIR_NAME = "values";
 const STRINGS_FILE_NAME = "strings.xml";
@@ -169,7 +169,6 @@ export const copyNotificationIcon = async (
         const src = fs.readFileSync(sourcePath);
         const prev = fs.existsSync(destPath) ? fs.readFileSync(destPath) : null;
         if (prev && Buffer.compare(prev, src) === 0) {
-            logSuccess("icon up-to-date", { destPath });
             return;
         }
         fs.writeFileSync(destPath, src);

@@ -31,12 +31,9 @@ export const IOS_LINE_CONFIGURE_MINDBOX_APP_WITH_OPTIONS: string = "    MindboxA
 export const IOS_LINE_CALL_REQUEST_PERMISSIONS: string = "    onRequestPushNotifications()\n";
 export const IOS_METHOD_REQUEST_PERMISSIONS_SIGNATURE: string = "func onRequestPushNotifications(";
 export const IOS_METHOD_REQUEST_PERMISSIONS: string = `\n  public func onRequestPushNotifications() {\n      UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in\n        Mindbox.shared.notificationsRequestAuthorization(granted: granted)\n      }\n  }\n`;
-export const IOS_METHOD_USER_NOTIFICATION_CENTER_SIGNATURE: string = "func userNotificationCenter(_ center: UNUserNotificationCenter,";
-export const IOS_METHOD_USER_NOTIFICATION_CENTER: string = `\n  public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {\n      MindboxJsDelivery.emitEvent(response)\n      completionHandler()\n  }\n`;
 export const IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE: string = "UNUserNotificationCenterDelegate";
-
 export const IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE: string = "extension AppDelegate: NotificationDelegate";
-export const IOS_EXTENSION_NOTIFICATION_DELEGATE: string = `\nextension AppDelegate: NotificationDelegate {\n  public func didReceive(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) -> Bool {\n    if Mindbox.shared.isMindboxPush(userInfo: response.notification.request.content.userInfo) {\n      MindboxJsDelivery.emitEvent(response)\n      completionHandler()\n      return true\n    } else {\n      completionHandler()\n      return false\n    }\n  }\n}\n`;
+export const IOS_EXTENSION_NOTIFICATION_DELEGATE: string = `\nextension AppDelegate: NotificationDelegate {\n  public func didReceive(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) -> Bool {\n    if Mindbox.shared.isMindboxPush(userInfo: response.notification.request.content.userInfo) {\n      completionHandler()\n      return true\n    } else {\n      completionHandler()\n      return false\n    }\n  }\n}\n`;
 export const POD_MINDBOX_LINE: string = "pod 'Mindbox'";
 export const POD_MINDBOX_LOGGER_LINE: string = "pod 'MindboxLogger'";
 export const POD_MINDBOX_COMMON_LINE: string = "pod 'MindboxCommon'";

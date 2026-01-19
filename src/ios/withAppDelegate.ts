@@ -11,9 +11,7 @@ import {
     IOS_LINE_CONFIGURE_MINDBOX_APP_WITH_OPTIONS,
     IOS_LINE_CALL_REQUEST_PERMISSIONS, 
     IOS_METHOD_REQUEST_PERMISSIONS, 
-    IOS_METHOD_REQUEST_PERMISSIONS_SIGNATURE, 
-    IOS_METHOD_USER_NOTIFICATION_CENTER, 
-    IOS_METHOD_USER_NOTIFICATION_CENTER_SIGNATURE, 
+    IOS_METHOD_REQUEST_PERMISSIONS_SIGNATURE,
     IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE,
     IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE,
     IOS_EXTENSION_NOTIFICATION_DELEGATE 
@@ -167,15 +165,6 @@ function ensureRequestPermissionMethod(contents: string): string {
     );
 }
 
-function ensureUserNotificationCenterMethod(contents: string): string {
-    return addMethodToClass(
-        contents,
-        IOS_METHOD_USER_NOTIFICATION_CENTER_SIGNATURE,
-        IOS_METHOD_USER_NOTIFICATION_CENTER,
-        "add userNotificationCenter method to AppDelegate"
-    );
-}
-
 function ensureExpoNotificationDelegateExtension(contents: string): string {
     if (contents.includes(IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE)) {
         return contents;
@@ -212,8 +201,6 @@ function applySwiftModifications(contents: string, nativeRequestPermission: bool
     }
     if (useExpoNotifications) {
         modified = ensureExpoNotificationDelegateExtension(modified);
-    } else {
-        modified = ensureUserNotificationCenterMethod(modified);
     }
     return modified;
 }

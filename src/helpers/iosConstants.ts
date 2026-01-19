@@ -23,17 +23,53 @@ export const BG_TASK_DB_CLEAN_APP_PROCESSING_SUFFIX: string = ".DBCleanAppProces
 export const IOS_IMPORT_MINDBOX_SDK: string = "import MindboxSdk";
 export const IOS_IMPORT_MINDBOX: string = "import Mindbox";
 export const IOS_IMPORT_EX_NOTIFICATIONS: string = "import EXNotifications";
-export const IOS_LINE_SET_UN_CENTER_DELEGATE: string = "    UNUserNotificationCenter.current().delegate = self\n";
-export const IOS_LINE_SET_EXPO_CENTER_DELEGATE: string = "    UNUserNotificationCenter.current().delegate = NotificationCenterManager.shared\n";
-export const IOS_LINE_ADD_EXPO_NOTIFICATION_DELEGATE: string = "    NotificationCenterManager.shared.addDelegate(self)\n";
-export const IOS_LINE_CONFIGURE_MINDBOX_APP: string = "    MindboxApp.configure()\n";
-export const IOS_LINE_CONFIGURE_MINDBOX_APP_WITH_OPTIONS: string = "    MindboxApp.configure(launchOptions: launchOptions)\n";
-export const IOS_LINE_CALL_REQUEST_PERMISSIONS: string = "    onRequestPushNotifications()\n";
+export const IOS_LINE_SET_UN_CENTER_DELEGATE: string = `
+    UNUserNotificationCenter.current().delegate = self
+`;
+export const IOS_LINE_SET_EXPO_CENTER_DELEGATE: string = `
+    UNUserNotificationCenter.current().delegate = NotificationCenterManager.shared
+`;
+export const IOS_LINE_ADD_EXPO_NOTIFICATION_DELEGATE: string = `
+    NotificationCenterManager.shared.addDelegate(self)
+`;
+export const IOS_LINE_CONFIGURE_MINDBOX_APP: string = `
+    MindboxApp.configure()
+`;
+export const IOS_LINE_CONFIGURE_MINDBOX_APP_WITH_OPTIONS: string = `
+    MindboxApp.configure(launchOptions: launchOptions)
+`;
+export const IOS_LINE_CALL_REQUEST_PERMISSIONS: string = `
+    onRequestPushNotifications()
+`;
 export const IOS_METHOD_REQUEST_PERMISSIONS_SIGNATURE: string = "func onRequestPushNotifications(";
-export const IOS_METHOD_REQUEST_PERMISSIONS: string = `\n  public func onRequestPushNotifications() {\n      UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in\n        Mindbox.shared.notificationsRequestAuthorization(granted: granted)\n      }\n  }\n`;
+export const IOS_METHOD_REQUEST_PERMISSIONS: string = `
+  public func onRequestPushNotifications() {
+    UNUserNotificationCenter.current().requestAuthorization(
+        options: [.alert, .sound, .badge]
+    ) { granted, error in
+        Mindbox.shared.notificationsRequestAuthorization(granted: granted)
+    }
+  }
+`;
 export const IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE: string = "UNUserNotificationCenterDelegate";
 export const IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE: string = "extension AppDelegate: NotificationDelegate";
-export const IOS_EXTENSION_NOTIFICATION_DELEGATE: string = `\nextension AppDelegate: NotificationDelegate {\n  public func didReceive(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) -> Bool {\n    if Mindbox.shared.isMindboxPush(userInfo: response.notification.request.content.userInfo) {\n      completionHandler()\n      return true\n    } else {\n      completionHandler()\n      return false\n    }\n  }\n}\n`;
+export const IOS_EXTENSION_NOTIFICATION_DELEGATE: string = `
+extension AppDelegate: NotificationDelegate {
+
+  public func didReceive(
+    _ response: UNNotificationResponse,
+    completionHandler: @escaping () -> Void
+  ) -> Bool {
+  
+    let isMindbox = Mindbox.shared.isMindboxPush(
+      userInfo: response.notification.request.content.userInfo
+    )
+
+    completionHandler()
+    return isMindbox
+  }
+}
+`;
 export const POD_MINDBOX_LINE: string = "pod 'Mindbox'";
 export const POD_MINDBOX_LOGGER_LINE: string = "pod 'MindboxLogger'";
 export const POD_MINDBOX_COMMON_LINE: string = "pod 'MindboxCommon'";

@@ -60,16 +60,13 @@ extension AppDelegate: NotificationDelegate {
     _ response: UNNotificationResponse,
     completionHandler: @escaping () -> Void
   ) -> Bool {
-
-    if Mindbox.shared.isMindboxPush(
+  
+    let isMindbox = Mindbox.shared.isMindboxPush(
       userInfo: response.notification.request.content.userInfo
-    ) {
-      completionHandler()
-      return true
-    } else {
-      completionHandler()
-      return false
-    }
+    )
+
+    completionHandler()
+    return isMindbox
   }
 }
 `;

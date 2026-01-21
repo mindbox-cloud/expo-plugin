@@ -16,11 +16,12 @@
     "expo": "54.0.12",
     "expo-build-properties": "~1.0.9",
     "expo-constants": "^18.0.10",
+    "expo-dev-client": "~6.0.20",
     "expo-device": "^8.0.9",
     "expo-notifications": "^0.32.12",
     "expo-status-bar": "~3.0.8",
-    "mindbox-expo-plugin": "1.0.10-rc",
-    "mindbox-sdk": "^2.14.3",
+    "mindbox-expo-plugin": "1.0.4",
+    "mindbox-sdk": "^2.14.6",
     "react": "19.1.0",
     "react-native": "0.81.4",
     "react-native-safe-area-context": "^5.6.1",
@@ -28,9 +29,9 @@
   },
   "private": true,
   "devDependencies": {
+    "@react-native-community/cli": "latest",
     "@types/react": "^19.1.15",
     "@types/react-native": "^0.72.8",
-    "typescript": "~5.9.2",
-    "@react-native-community/cli": "latest"
+    "typescript": "~5.9.2"
   }
 }

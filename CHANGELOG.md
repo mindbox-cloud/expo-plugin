@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.4] - 2026-01-21
+
+### Changes
+Bump mindbox plugin to version:1.0.4
+
+
 ## [Unreleased]
 
 ### Changes
@@ -22,7 +28,3 @@ Bump mindbox plugin to version:1.0.1
 
 ### Changes
 Bump mindbox plugin to version:1.0.0
-
-
-
-

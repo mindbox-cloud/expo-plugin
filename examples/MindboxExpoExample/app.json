@@ -1,8 +1,12 @@
-
 {
   "expo": {
     "name": "MindboxExpoExample",
-    "slug": "MindboxExpoExample",
+    "slug": "example-expo-plugin",
+    "extra": {
+      "eas": {
+        "projectId": "3e575d8d-05da-4a90-8b9e-623389bae0ad"
+      }
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,28 +19,53 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.MindboxExpoExample"
+      "bundleIdentifier": "mindbox.Example.Expo",
+      "appleTeamId": "622436AMYX",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./credentials/google-services.json",
       "edgeToEdgeEnabled": true,
       "package": "com.example.MindboxExpoExample"
     },
-   "plugins": [
-     [
-       "mindbox-expo-plugin",
-       {
-         "androidPushProviders": ["firebase", "huawei","rustore"],
-         "googleServicesFilePath": "./credentials/google-services.json",
-         "huaweiServicesFilePath": "./credentials/google-services.json",
-         "rustoreFilePath": "124dwafwfw",
-         "channelDescription": "124dwafwfw",
-         "icon": "124dwafwfw"
-       }
-     ]
-   ]
+    "plugins": [
+      [
+        "mindbox-expo-plugin",
+        {
+          "androidPushProviders": [
+            "firebase",
+            "huawei",
+            "rustore"
+          ],
+          "googleServicesFilePath": "./credentials/google-services.json",
+          "huaweiServicesFilePath": "./credentials/agconnect-services.json",
+          "rustoreProjectId": "hWZJga09nar5gsh0lbKlkZDuCgDJswgN",
+          "androidChannelId": "expo_channel_id",
+          "androidChannelName": "expo_name",
+          "androidChannelDescription": "expo_description",
+          "smallIcon": "./assets/icon_mb.png",
+          "smallIconAccentColor": "#80F00A0A",
+          "iosMode": "production",
+          "usedExpoNotification": true
+        }
+      ],
+      [
+        "expo-notifications"
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ]
   }
 }

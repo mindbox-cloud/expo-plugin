@@ -6,9 +6,9 @@ const syncRecoOperationName = 'categoryReco.sync';
 
 const requestProductOperationBodyAsync = {
   viewProduct: {
-    productGroup: {
+    product: {
       ids: {
-        website: 'test-1'
+        website: "test-1"
       }
     }
   }

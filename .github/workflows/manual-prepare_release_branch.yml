@@ -1,0 +1,138 @@
+name: "1. Manual Release Prep: Mindbox expo plugin"
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Mindbox expo plugin release version (semver: X.Y.Z or X.Y.Z-rc)'
+        required: true
+      source_branch:
+        description: 'Create branch from'
+        required: true
+        default: 'develop'
+      target_branch:
+        description: 'Pull Request to'
+        required: true
+        default: 'master'
+
+jobs:
+  validate-input:
+    name: Validate versions format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check release_version
+        run: |
+          V=${{ github.event.inputs.release_version }}
+          echo "Input release_version=$V"
+          if ! [[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-rc)?$ ]]; then
+            echo "❌ release_version must be X.Y.Z or X.Y.Z-rc"
+            exit 1
+          fi
+
+  validate-branches:
+    name: Validate source & target branches exist
+    runs-on: ubuntu-latest
+    needs: validate-input
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Check source branch
+        run: |
+          SRC=${{ github.event.inputs.source_branch }}
+          if ! git ls-remote --heads origin "$SRC" | grep -q "$SRC"; then
+            echo "❌ source_branch '$SRC' does not exist on origin"
+            exit 1
+          fi
+      - name: Check target branch
+        run: |
+          DST=${{ github.event.inputs.target_branch }}
+          if ! git ls-remote --heads origin "$DST" | grep -q "$DST"; then
+            echo "❌ target_branch '$DST' does not exist on origin"
+            exit 1
+          fi
+
+  bump_and_branch:
+    name: Create release branch & bump versions
+    runs-on: ubuntu-latest
+    needs: validate-branches
+    outputs:
+      release_branch: ${{ steps.bump.outputs.release_branch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.source_branch }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - id: bump
+        name: Create branch & apply bumps
+        run: |
+          set -euo pipefail
+          VERSION="${{ github.event.inputs.release_version }}"
+          SRC="${{ github.event.inputs.source_branch }}"
+          REL="release/$VERSION"
+          echo "→ Branching from $SRC into $REL"
+          git checkout -b "$REL"
+
+          ##############################################################################
+          # 1) package.json: bump "target-version"
+          ##############################################################################
+          echo "→ Bumping package.json target-version"
+          sed -i "s/\"target-version\": \".*\"/\"target-version\": \"$VERSION\"/" package.json
+          git add package.json
+          ##############################################################################
+          # 2) CHANGELOG.md: insert Unreleased section at top
+          ##############################################################################
+          echo "→ Inserting Unreleased section into CHANGELOG.md"
+  
+          awk -v ver="$VERSION" '
+            /^# Changelog/ {
+              print
+              print ""
+              print "## [Unreleased]"
+              print ""
+              print "### Changes"
+              print "Bump mindbox plugin to version:" ver
+              print ""
+              next
+            }
+            { print }
+          ' CHANGELOG.md > CHANGELOG.tmp && mv CHANGELOG.tmp CHANGELOG.md
+          git add CHANGELOG.md
+
+          ##############################################################################
+          # 3) Final commit
+          ##############################################################################
+          git commit -m "Bump mindbox expo plugin versions: $VERSION"
+          echo "release_branch=$REL" >> $GITHUB_OUTPUT
+
+      - name: Push release branch
+        run: git push --set-upstream origin ${{ steps.bump.outputs.release_branch }}
+
+  create_pull_request:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    needs: bump_and_branch
+    steps:
+      - name: Build PR body and open PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_FOR_TRIGGERING_BRANCH_PROTECTION }}
+          SRC: ${{ needs.bump_and_branch.outputs.release_branch }}
+          DST: ${{ github.event.inputs.target_branch }}
+          REPO: ${{ github.repository }}
+        run: |
+          BODY=$(
+            printf 'Automated PR: merge `%s` into `%s`\n\n**Versions:**\n- Mindbox Expo Plugin: `%s`\n' \
+              "$SRC" "$DST" "${{ github.event.inputs.release_version }}"
+          )
+
+          gh pr create \
+            --repo "$REPO" \
+            --base "$DST" \
+            --head "$SRC" \
+            --title "Release ${{ github.event.inputs.release_version }}" \
+            --body "$BODY"

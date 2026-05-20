@@ -22,7 +22,11 @@ export const BG_TASK_GD_APP_PROCESSING_SUFFIX: string = ".GDAppProcessing";
 export const BG_TASK_DB_CLEAN_APP_PROCESSING_SUFFIX: string = ".DBCleanAppProcessing";
 export const IOS_IMPORT_MINDBOX_SDK: string = "import MindboxSdk";
 export const IOS_IMPORT_MINDBOX: string = "import Mindbox";
-export const IOS_IMPORT_EX_NOTIFICATIONS: string = "import EXNotifications";
+export const IOS_IMPORT_EX_NOTIFICATIONS: string = `#if canImport(ExpoNotifications)
+internal import ExpoNotifications
+#else
+import EXNotifications
+#endif`;
 export const IOS_LINE_SET_UN_CENTER_DELEGATE: string = `
     UNUserNotificationCenter.current().delegate = self
 `;

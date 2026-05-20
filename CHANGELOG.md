@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.5] - 2026-05-20
 
 ### Changes
 Bump mindbox plugin to version:1.0.5

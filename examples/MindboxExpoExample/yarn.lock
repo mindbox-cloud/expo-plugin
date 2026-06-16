@@ -3294,17 +3294,17 @@ mimic-fn@^1.0.0:
   resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-1.2.0.tgz#820c86a39334640e99516928bd03fca88057d022"
   integrity sha512-jf84uxzwiuiIVKiOLpfYk7N46TSy8ubTonmneY9vrpHNAnp0QBt2BxWV9dO3/j+BoVAb+a5G6YDPW3M5HOdMWQ==
 
-mindbox-expo-plugin@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/mindbox-expo-plugin/-/mindbox-expo-plugin-1.0.4.tgz#4615e5e34fc6606970f657fd4243cbc878b075e2"
-  integrity sha512-nhpF12EYcAvWclMOwjXzWV2xx3DZ3hyAjLoEZnW+YDXzDTvcYu0Do5P17t+yaPdCw6D659qRZUoL9us7tsoqZw==
+mindbox-expo-plugin@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/mindbox-expo-plugin/-/mindbox-expo-plugin-1.0.5.tgz#915632af846a5a389f48e83132215fa594544e24"
+  integrity sha512-z0FSOq1rBw2XdY6g09m4miA3bF699Z/rURd+i0z0omX18SO6JXMU71jgsmXDYbhYE4x7p+NZLbH1mFbnZwSLaQ==
   dependencies:
     "@expo/config-plugins" "^54.0.1"
 
-mindbox-sdk@^2.14.6:
-  version "2.15.1"
-  resolved "https://registry.yarnpkg.com/mindbox-sdk/-/mindbox-sdk-2.15.1.tgz#578fcfda9af9e3f43b0084092652d0953e35d68b"
-  integrity sha512-R27C1b1JskQbj+vHvpf0yjLrp62CPS5ycTJPZVQrfY3isZSOm4HhMvNGGdHiA9ZF6axIwLuGRdnQVFIk5GGS1g==
+mindbox-sdk@^2.15.1:
+  version "2.15.2"
+  resolved "https://registry.yarnpkg.com/mindbox-sdk/-/mindbox-sdk-2.15.2.tgz#a5f4e1f9cc3fc813a07a81071f9c3ab934af7aaa"
+  integrity sha512-u7VTXoIKW1DrgvzCvyXH6TYqKxYf/5m+I2qfuzndBtptEgq/9XGNdAhMGIPogAa7X7Srq9EBiAzxgDiGTgUBkQ==
 
 minimatch@^10.2.2:
   version "10.2.5"

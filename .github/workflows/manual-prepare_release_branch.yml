@@ -15,14 +15,18 @@ on:
         required: true
         default: 'master'
 
+permissions:
+  contents: read
+
 jobs:
   validate-input:
     name: Validate versions format
     runs-on: ubuntu-latest
     steps:
       - name: Check release_version
+        env:
+          V: ${{ github.event.inputs.release_version }}
         run: |
-          V=${{ github.event.inputs.release_version }}
           echo "Input release_version=$V"
           if ! [[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-rc)?$ ]]; then
             echo "❌ release_version must be X.Y.Z or X.Y.Z-rc"
@@ -34,19 +38,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-input
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with: { fetch-depth: 0 }
       - name: Check source branch
+        env:
+          SRC: ${{ github.event.inputs.source_branch }}
         run: |
-          SRC=${{ github.event.inputs.source_branch }}
-          if ! git ls-remote --heads origin "$SRC" | grep -q "$SRC"; then
+          if [ -z "$(git ls-remote --heads origin "refs/heads/$SRC")" ]; then
             echo "❌ source_branch '$SRC' does not exist on origin"
             exit 1
           fi
       - name: Check target branch
+        env:
+          DST: ${{ github.event.inputs.target_branch }}
         run: |
-          DST=${{ github.event.inputs.target_branch }}
-          if ! git ls-remote --heads origin "$DST" | grep -q "$DST"; then
+          if [ -z "$(git ls-remote --heads origin "refs/heads/$DST")" ]; then
             echo "❌ target_branch '$DST' does not exist on origin"
             exit 1
           fi
@@ -55,10 +61,12 @@ jobs:
     name: Create release branch & bump versions
     runs-on: ubuntu-latest
     needs: validate-branches
+    permissions:
+      contents: write
     outputs:
       release_branch: ${{ steps.bump.outputs.release_branch }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: ${{ github.event.inputs.source_branch }}
           fetch-depth: 0
@@ -70,10 +78,11 @@ jobs:
 
       - id: bump
         name: Create branch & apply bumps
+        env:
+          VERSION: ${{ github.event.inputs.release_version }}
+          SRC: ${{ github.event.inputs.source_branch }}
         run: |
           set -euo pipefail
-          VERSION="${{ github.event.inputs.release_version }}"
-          SRC="${{ github.event.inputs.source_branch }}"
           REL="release/$VERSION"
           echo "→ Branching from $SRC into $REL"
           git checkout -b "$REL"
@@ -88,7 +97,7 @@ jobs:
           # 2) CHANGELOG.md: insert Unreleased section at top
           ##############################################################################
           echo "→ Inserting Unreleased section into CHANGELOG.md"
-  
+
           awk -v ver="$VERSION" '
             /^# Changelog/ {
               print
@@ -108,10 +117,12 @@ jobs:
           # 3) Final commit
           ##############################################################################
           git commit -m "Bump mindbox expo plugin versions: $VERSION"
-          echo "release_branch=$REL" >> $GITHUB_OUTPUT
+          echo "release_branch=$REL" >> "$GITHUB_OUTPUT"
 
       - name: Push release branch
-        run: git push --set-upstream origin ${{ steps.bump.outputs.release_branch }}
+        env:
+          REL: ${{ steps.bump.outputs.release_branch }}
+        run: git push --set-upstream origin "$REL"
 
   create_pull_request:
     name: Create Pull Request
@@ -124,15 +135,16 @@ jobs:
           SRC: ${{ needs.bump_and_branch.outputs.release_branch }}
           DST: ${{ github.event.inputs.target_branch }}
           REPO: ${{ github.repository }}
+          VERSION: ${{ github.event.inputs.release_version }}
         run: |
           BODY=$(
-            printf 'Automated PR: merge `%s` into `%s`\n\n**Versions:**\n- Mindbox Expo Plugin: `%s`\n' \
-              "$SRC" "$DST" "${{ github.event.inputs.release_version }}"
+            printf 'Automated PR: merge %s into %s\n\nVersions:\n- Mindbox Expo Plugin: %s\n' \
+              "$SRC" "$DST" "$VERSION"
           )
 
           gh pr create \
             --repo "$REPO" \
             --base "$DST" \
             --head "$SRC" \
-            --title "Release ${{ github.event.inputs.release_version }}" \
+            --title "Release $VERSION" \
             --body "$BODY"

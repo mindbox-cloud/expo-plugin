@@ -31,3 +31,4 @@ examples/MindboxExpoExample/credentials/
 # Misc
 .env
 .env.*
+.claude/

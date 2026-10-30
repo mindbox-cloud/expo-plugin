@@ -39,7 +39,8 @@
       "react-native": "./build/runtime/index.js",
       "default": "./app.plugin.js"
     },
-    "./runtime": "./build/runtime/index.js"
+    "./runtime": "./build/runtime/index.js",
+    "./app.plugin.js": "./app.plugin.js"
   },
   "dependencies": {
     "@expo/config-plugins": "^54.0.1"

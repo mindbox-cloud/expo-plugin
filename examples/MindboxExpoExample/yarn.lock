@@ -2182,6 +2182,11 @@ expo-status-bar@~58.0.5:
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-58.0.5.tgz#7889c5b559a9855235bf23cd4bef317176b99559"
   integrity sha512-Lq1h7QpNY2FY7+Dyrn15atrFZs1Yd4IfMfhwyyWb3TqWc+vwtYZH54W9VhhjqXtgitXe+RVAX7YZoCekjbLmug==
 
+expo-tracking-transparency@~58.0.2:
+  version "58.0.2"
+  resolved "https://registry.yarnpkg.com/expo-tracking-transparency/-/expo-tracking-transparency-58.0.2.tgz#4bc2484c213339fda383341eaa47a229b291961c"
+  integrity sha512-9nhQgj7EZoyGCawOLSPvUP/4XqkASKXbaedECGXvLVKgwEZplrKDSZ7OEtcJgRhJ3jh+LDpa439PCI6ewYbknA==
+
 expo-updates-interface@~58.0.1:
   version "58.0.1"
   resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-58.0.1.tgz#4ae8a38332e7f036ba45b3cb9ea865b5fd6552f2"

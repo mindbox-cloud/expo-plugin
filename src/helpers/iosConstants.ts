@@ -79,6 +79,8 @@ export const POD_MINDBOX_LOGGER_LINE: string = "pod 'MindboxLogger'";
 export const POD_MINDBOX_COMMON_LINE: string = "pod 'MindboxCommon'";
 export const POD_MINDBOX_NOTIFICATIONS_LINE: string = "pod 'MindboxNotifications'";
 export const PODFILE_ANCHOR_PREPARE_RN: string = "prepare_react_native_project!";
+export const PODFILE_SOURCE_MINDBOX_SPECS_LINE: string = "source 'https://github.com/mindbox-cloud/Specs.git'";
+export const PODFILE_SOURCE_COCOAPODS_CDN_LINE: string = "source 'https://cdn.cocoapods.org/'";
 
 export const IOS_NSE_PRODUCT_BUNDLE_ID_SUFFIX: string = ".MindboxNotificationServiceExtension";
 export const IOS_NSE_PRODUCT_NAME: string = "MindboxNotificationServiceExtension";

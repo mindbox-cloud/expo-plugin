@@ -24,7 +24,7 @@ import {
 const IMPORT_BLOCK_REGEX = /^(import\s+.*\n)+/;
 const CLASS_DECLARATION_REGEX = /(public\s+)?class\s+AppDelegate\s*:\s*([^\{\n]+)/;
 const CLASS_BODY_REGEX = /(public\s+)?class\s+AppDelegate\b[^\{]*\{/;
-const CONTINUE_USER_ACTIVITY_REGEX = /func\s+application\(\s*_\s+\w+\s*:\s*UIApplication\s*,\s*continue\s+(\w+)\s*:\s*NSUserActivity\b/;
+const CONTINUE_USER_ACTIVITY_REGEX = /func\s+application\(\s*_\s*\w*\s*:\s*UIApplication\s*,\s*continue\s+(\w+)\s*:\s*NSUserActivity\b/;
 const DID_FINISH_LAUNCHING_REGEX = /(public\s+)?override\s+func\s+application\([\s\S]*?didFinishLaunchingWithOptions[\s\S]*?\)/;
 
 function addImports(contents: string, useExpoNotifications: boolean): string {

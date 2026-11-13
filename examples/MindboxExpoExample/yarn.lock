@@ -3119,10 +3119,10 @@ mindbox-expo-plugin@1.0.5:
   dependencies:
     "@expo/config-plugins" "^54.0.1"
 
-mindbox-sdk@^2.15.1:
-  version "2.15.2"
-  resolved "https://registry.yarnpkg.com/mindbox-sdk/-/mindbox-sdk-2.15.2.tgz#a5f4e1f9cc3fc813a07a81071f9c3ab934af7aaa"
-  integrity sha512-u7VTXoIKW1DrgvzCvyXH6TYqKxYf/5m+I2qfuzndBtptEgq/9XGNdAhMGIPogAa7X7Srq9EBiAzxgDiGTgUBkQ==
+mindbox-sdk@^2.16.0:
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/mindbox-sdk/-/mindbox-sdk-2.16.0.tgz#b214ed2055d5429b069b84bc8fd318090dd2fe05"
+  integrity sha512-tpYgnzlakd5AvjNvQYUM4nvOA/rhZZqWhzOOTZVBWnCpU9U7EtNJw799dzTH9aTkhA03LqIbjTOJ5wsyNUsnlQ==
 
 minimatch@^10.2.2:
   version "10.2.5"

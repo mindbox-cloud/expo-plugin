@@ -14,12 +14,17 @@ import {
     IOS_METHOD_REQUEST_PERMISSIONS_SIGNATURE,
     IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE,
     IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE,
-    IOS_EXTENSION_NOTIFICATION_DELEGATE 
+    IOS_EXTENSION_NOTIFICATION_DELEGATE,
+    IOS_TRACK_UNIVERSAL_LINK_SIGNATURE,
+    IOS_LINE_TRACK_UNIVERSAL_LINK,
+    IOS_METHOD_CONTINUE_USER_ACTIVITY_SIGNATURE,
+    IOS_METHOD_CONTINUE_USER_ACTIVITY
 } from "../helpers/iosConstants";
 
 const IMPORT_BLOCK_REGEX = /^(import\s+.*\n)+/;
 const CLASS_DECLARATION_REGEX = /(public\s+)?class\s+AppDelegate\s*:\s*([^\{\n]+)/;
 const CLASS_BODY_REGEX = /(public\s+)?class\s+AppDelegate\b[^\{]*\{/;
+const CONTINUE_USER_ACTIVITY_REGEX = /func\s+application\(\s*_\s+\w+\s*:\s*UIApplication\s*,\s*continue\s+userActivity\s*:/;
 const DID_FINISH_LAUNCHING_REGEX = /(public\s+)?override\s+func\s+application\([\s\S]*?didFinishLaunchingWithOptions[\s\S]*?\)/;
 
 function addImports(contents: string, useExpoNotifications: boolean): string {
@@ -165,6 +170,22 @@ function ensureRequestPermissionMethod(contents: string): string {
     );
 }
 
+function ensureUniversalLinkTracking(contents: string): string {
+    if (contents.includes(IOS_TRACK_UNIVERSAL_LINK_SIGNATURE)) {
+        return contents;
+    }
+    const range = getMethodBodyRange(contents, CONTINUE_USER_ACTIVITY_REGEX);
+    if (range) {
+        return contents.slice(0, range.bodyStart) + IOS_LINE_TRACK_UNIVERSAL_LINK + contents.slice(range.bodyStart);
+    }
+    return addMethodToClass(
+        contents,
+        IOS_METHOD_CONTINUE_USER_ACTIVITY_SIGNATURE,
+        IOS_METHOD_CONTINUE_USER_ACTIVITY,
+        "add universal link tracking to AppDelegate"
+    );
+}
+
 function ensureExpoNotificationDelegateExtension(contents: string): string {
     if (contents.includes(IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE)) {
         return contents;
@@ -199,6 +220,7 @@ function applySwiftModifications(contents: string, nativeRequestPermission: bool
     if (nativeRequestPermission) {
         modified = ensureRequestPermissionMethod(modified);
     }
+    modified = ensureUniversalLinkTracking(modified);
     if (useExpoNotifications) {
         modified = ensureExpoNotificationDelegateExtension(modified);
     }

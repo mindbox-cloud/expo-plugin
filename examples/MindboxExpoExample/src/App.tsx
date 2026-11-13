@@ -5,7 +5,7 @@ import HomeScreen from './screens/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default function App(): JSX.Element {
+export default function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">

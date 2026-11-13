@@ -73,13 +73,13 @@ const configuration = {
   shouldCreateCustomer: true,
 };
 
-export default function HomeScreen(): JSX.Element {
+export default function HomeScreen(): React.JSX.Element {
   const [deviceUUID, setDeviceUUID] = useState('Empty');
   const [token, setToken] = useState('Empty');
   const [sdkVersion, setSdkVersion] = useState('Empty');
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
-  const [pushData, setPushData] = useState({
+  const [pushData, setPushData] = useState<{ pushUrl: string | null; pushPayload: string | null }>({
     pushUrl: null,
     pushPayload: null,
   })
@@ -152,7 +152,7 @@ export default function HomeScreen(): JSX.Element {
   }, []);
 
   const getPushData = useCallback(
-    (pushUrl: String | null, pushPayload: String | null) => {
+    (pushUrl: string | null, pushPayload: string | null) => {
       console.log("MindboxSdk.onPushClickReceived called!", { pushUrl, pushPayload });
       setTimeout(() => {
         // https://developers.mindbox.ru/docs/flutter-push-navigation-react-native

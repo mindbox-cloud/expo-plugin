@@ -55,6 +55,23 @@ export const IOS_METHOD_REQUEST_PERMISSIONS: string = `
     }
   }
 `;
+export const IOS_TRACK_UNIVERSAL_LINK_SIGNATURE: string = ".universalLink(";
+
+export const iosLineTrackUniversalLink = (userActivity: string): string => `
+    Mindbox.shared.track(.universalLink(${userActivity}))
+`;
+
+export const IOS_METHOD_CONTINUE_USER_ACTIVITY_SIGNATURE: string = "continue userActivity:";
+
+export const IOS_METHOD_CONTINUE_USER_ACTIVITY: string = `
+  public override func application(
+    _ application: UIApplication,
+    continue userActivity: NSUserActivity,
+    restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+  ) -> Bool {${iosLineTrackUniversalLink("userActivity")}    return super.application(application, continue: userActivity, restorationHandler: restorationHandler)
+  }
+`;
+
 export const IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE: string = "UNUserNotificationCenterDelegate";
 export const IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE: string = "extension AppDelegate: NotificationDelegate";
 export const IOS_EXTENSION_NOTIFICATION_DELEGATE: string = `

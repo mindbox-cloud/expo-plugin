@@ -2,12 +2,14 @@ import { ConfigPlugin, withDangerousMod } from "@expo/config-plugins";
 import type { MindboxPluginProps } from "../mindboxTypes";
 import * as fs from "fs";
 import * as path from "path";
-import { POD_MINDBOX_LINE, POD_MINDBOX_LOGGER_LINE, POD_MINDBOX_COMMON_LINE, POD_MINDBOX_NOTIFICATIONS_LINE, PODFILE_ANCHOR_PREPARE_RN, IOS_TARGET_NSE_NAME, IOS_TARGET_NCE_NAME } from "../helpers/iosConstants";
+import { POD_MINDBOX_LINE, POD_MINDBOX_LOGGER_LINE, POD_MINDBOX_COMMON_LINE, POD_MINDBOX_NOTIFICATIONS_LINE, PODFILE_ANCHOR_PREPARE_RN, PODFILE_SOURCE_MINDBOX_SPECS_LINE, PODFILE_SOURCE_COCOAPODS_CDN_LINE, IOS_TARGET_NSE_NAME, IOS_TARGET_NCE_NAME } from "../helpers/iosConstants";
 
 type PodfileContent = string;
 
 const TARGET_REGEX = /^target\s+'[^']+'\s+do\s*\n/m;
 const USE_EXPO_MODULES_REGEX = /^\s*use_expo_modules!\s*$/m;
+const SOURCE_REGEX = /^\s*source(?:\(|\s+[^=\s])/m;
+const MINDBOX_SPECS_SOURCE_REGEX = /^\s*source[\s(]+['"]https:\/\/github\.com\/mindbox-cloud\/Specs(?:\.git)?\/?['"]/im;
 const USE_FRAMEWORKS_LINE = "  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']";
 
 const withMindboxPodfile: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
@@ -32,12 +34,24 @@ export default withMindboxPodfile;
 
 function applyPodfileTransformations(podfile: PodfileContent, props: MindboxPluginProps): PodfileContent {
     const transformations = [
+        insertMindboxSpecsSource,
         insertMindboxNotificationsTarget,
         insertMindboxContentTarget,
         insertMindboxPods,
     ];
 
     return transformations.reduce((content, transform) => transform(content), podfile);
+}
+
+function insertMindboxSpecsSource(podfile: PodfileContent): PodfileContent {
+    if (MINDBOX_SPECS_SOURCE_REGEX.test(podfile)) {
+        return podfile;
+    }
+
+    const sources = SOURCE_REGEX.test(podfile)
+        ? [PODFILE_SOURCE_MINDBOX_SPECS_LINE]
+        : [PODFILE_SOURCE_MINDBOX_SPECS_LINE, PODFILE_SOURCE_COCOAPODS_CDN_LINE];
+    return `${sources.join("\n")}\n\n${podfile}`;
 }
 
 function insertTargetIfMissing(

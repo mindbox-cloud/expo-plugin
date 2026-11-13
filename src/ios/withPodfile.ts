@@ -8,7 +8,8 @@ type PodfileContent = string;
 
 const TARGET_REGEX = /^target\s+'[^']+'\s+do\s*\n/m;
 const USE_EXPO_MODULES_REGEX = /^\s*use_expo_modules!\s*$/m;
-const SOURCE_REGEX = /^\s*source\s+['"]/m;
+const SOURCE_REGEX = /^\s*source(?:\(|\s+[^=\s])/m;
+const MINDBOX_SPECS_SOURCE_REGEX = /^\s*source[\s(]+['"]https:\/\/github\.com\/mindbox-cloud\/Specs(?:\.git)?\/?['"]/im;
 const USE_FRAMEWORKS_LINE = "  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']";
 
 const withMindboxPodfile: ConfigPlugin<MindboxPluginProps> = (config, props = {}) => {
@@ -43,7 +44,7 @@ function applyPodfileTransformations(podfile: PodfileContent, props: MindboxPlug
 }
 
 function insertMindboxSpecsSource(podfile: PodfileContent): PodfileContent {
-    if (podfile.includes(PODFILE_SOURCE_MINDBOX_SPECS_LINE)) {
+    if (MINDBOX_SPECS_SOURCE_REGEX.test(podfile)) {
         return podfile;
     }
 

@@ -22,6 +22,12 @@
       "appleTeamId": "622436AMYX",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "privacyManifests": {
+        "NSPrivacyTracking": true,
+        "NSPrivacyTrackingDomains": [
+          "api-tracking.mindbox.ru"
+        ]
       }
     },
     "android": {
@@ -55,6 +61,12 @@
       ],
       [
         "expo-notifications"
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "The identifier is used to attribute advertising campaigns."
+        }
       ],
       [
         "expo-build-properties",

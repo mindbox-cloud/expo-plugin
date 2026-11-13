@@ -1,6 +1,12 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Button, Platform } from 'react-native';
+import { AppState, SafeAreaView, StyleSheet, Text, View, Button, Platform } from 'react-native';
 import MindboxSdk, { LogLevel } from 'mindbox-sdk';
+import {
+  getAdvertisingId,
+  getTrackingPermissionsAsync,
+  PermissionStatus,
+  requestTrackingPermissionsAsync,
+} from 'expo-tracking-transparency';
 import { sendAsync, sendSync } from '../utils/MindboxOperations';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -90,6 +96,28 @@ export default function HomeScreen(): JSX.Element {
     } catch (error) {
       console.log(error);
     }
+  }, []);
+
+  // iOS only: the SDK does not read the IDFA itself, the app passes it on every foreground.
+  // The request repeats until the user answers: iOS skips the prompt while another permission alert is open.
+  useEffect(() => {
+    if (Platform.OS !== 'ios') {
+      return;
+    }
+    const passAdvertisingIdentifier = async () => {
+      const { status } = await getTrackingPermissionsAsync();
+      if (status === PermissionStatus.UNDETERMINED) {
+        await requestTrackingPermissionsAsync();
+      }
+      MindboxSdk.setAdvertisingIdentifier(getAdvertisingId());
+    };
+    passAdvertisingIdentifier();
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        passAdvertisingIdentifier();
+      }
+    });
+    return () => subscription.remove();
   }, []);
 
   useEffect(() => {

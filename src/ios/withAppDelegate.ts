@@ -16,7 +16,7 @@ import {
     IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE,
     IOS_EXTENSION_NOTIFICATION_DELEGATE,
     IOS_TRACK_UNIVERSAL_LINK_SIGNATURE,
-    IOS_LINE_TRACK_UNIVERSAL_LINK,
+    iosLineTrackUniversalLink,
     IOS_METHOD_CONTINUE_USER_ACTIVITY_SIGNATURE,
     IOS_METHOD_CONTINUE_USER_ACTIVITY
 } from "../helpers/iosConstants";
@@ -24,7 +24,7 @@ import {
 const IMPORT_BLOCK_REGEX = /^(import\s+.*\n)+/;
 const CLASS_DECLARATION_REGEX = /(public\s+)?class\s+AppDelegate\s*:\s*([^\{\n]+)/;
 const CLASS_BODY_REGEX = /(public\s+)?class\s+AppDelegate\b[^\{]*\{/;
-const CONTINUE_USER_ACTIVITY_REGEX = /func\s+application\(\s*_\s+\w+\s*:\s*UIApplication\s*,\s*continue\s+userActivity\s*:/;
+const CONTINUE_USER_ACTIVITY_REGEX = /func\s+application\(\s*_\s+\w+\s*:\s*UIApplication\s*,\s*continue\s+(\w+)\s*:\s*NSUserActivity\b/;
 const DID_FINISH_LAUNCHING_REGEX = /(public\s+)?override\s+func\s+application\([\s\S]*?didFinishLaunchingWithOptions[\s\S]*?\)/;
 
 function addImports(contents: string, useExpoNotifications: boolean): string {
@@ -174,9 +174,11 @@ function ensureUniversalLinkTracking(contents: string): string {
     if (contents.includes(IOS_TRACK_UNIVERSAL_LINK_SIGNATURE)) {
         return contents;
     }
+    const continueMatch = contents.match(CONTINUE_USER_ACTIVITY_REGEX);
     const range = getMethodBodyRange(contents, CONTINUE_USER_ACTIVITY_REGEX);
-    if (range) {
-        return contents.slice(0, range.bodyStart) + IOS_LINE_TRACK_UNIVERSAL_LINK + contents.slice(range.bodyStart);
+    if (continueMatch && range) {
+        const trackLine = iosLineTrackUniversalLink(continueMatch[1]);
+        return contents.slice(0, range.bodyStart) + trackLine + contents.slice(range.bodyStart);
     }
     return addMethodToClass(
         contents,

@@ -24,7 +24,7 @@ const EXPO_NOTIFICATION_DEPENDENCIES = [
     "cloud.mindbox:mobile-sdk",
     "cloud.mindbox:mindbox-firebase",
     "cloud.mindbox:mindbox-sdk-starter-core",
-    "com.google.firebase:firebase-messaging",
+    ANDROID_CONSTANTS.FIREBASE_MESSAGING_DEPENDENCY,
 ];
 
 const resolveServiceSourceContent = (): string | null => {

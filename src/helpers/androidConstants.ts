@@ -2,6 +2,7 @@ const VERSIONS = {
     GOOGLE_SERVICES: "4.4.0",
     HUAWEI_AGCP: "1.9.1.300",
     HUAWEI_PUSH: "6.11.0.300",
+    FIREBASE_MESSAGING: "24.1.0",
 } as const;
 
 
@@ -11,6 +12,7 @@ export const ANDROID_CONSTANTS = {
     GOOGLE_SERVICES_CLASSPATH: `    classpath "com.google.gms:google-services:${VERSIONS.GOOGLE_SERVICES}"`,
     GOOGLE_SERVICES_PLUGIN_STRING: "com.google.gms.google-services",
     GOOGLE_SERVICES_PLUGIN: "apply plugin: 'com.google.gms.google-services'",
+    FIREBASE_MESSAGING_DEPENDENCY: `com.google.firebase:firebase-messaging:${VERSIONS.FIREBASE_MESSAGING}`,
     HUAWEI_MAVEN_URL: "https://developer.huawei.com/repo/",
     HUAWEI_MAVEN_REPO: "    maven { url 'https://developer.huawei.com/repo/' }",
     HUAWEI_AGCP_CLASSPATH_STRING: "com.huawei.agconnect:agcp",

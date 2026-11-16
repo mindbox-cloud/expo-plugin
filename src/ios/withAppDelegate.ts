@@ -14,12 +14,18 @@ import {
     IOS_METHOD_REQUEST_PERMISSIONS_SIGNATURE,
     IOS_UN_USER_NOTIFICATION_CENTER_DELEGATE,
     IOS_EXTENSION_NOTIFICATION_DELEGATE_SIGNATURE,
-    IOS_EXTENSION_NOTIFICATION_DELEGATE 
+    IOS_EXTENSION_NOTIFICATION_DELEGATE,
+    iosLineTrackUniversalLink,
+    IOS_METHOD_CONTINUE_USER_ACTIVITY
 } from "../helpers/iosConstants";
+import { logWarning } from "../utils/errorUtils";
 
 const IMPORT_BLOCK_REGEX = /^(import\s+.*\n)+/;
 const CLASS_DECLARATION_REGEX = /(public\s+)?class\s+AppDelegate\s*:\s*([^\{\n]+)/;
 const CLASS_BODY_REGEX = /(public\s+)?class\s+AppDelegate\b[^\{]*\{/;
+const UNIVERSAL_LINK_TRACKING_REGEX = /\.universalLink\s*[(=]/;
+const CONTINUE_USER_ACTIVITY_METHOD_REGEX = /func\s+application\([^)]*\bcontinue\s+\w+\s*:/;
+const CONTINUE_USER_ACTIVITY_REGEX = /func\s+application\(\s*_\s*\w*\s*:\s*(?:\w+\.)?UIApplication\s*,\s*continue\s+(\w+)\s*:\s*(?:\w+\.)?NSUserActivity\b/;
 const DID_FINISH_LAUNCHING_REGEX = /(public\s+)?override\s+func\s+application\([\s\S]*?didFinishLaunchingWithOptions[\s\S]*?\)/;
 
 function addImports(contents: string, useExpoNotifications: boolean): string {
@@ -153,7 +159,15 @@ function addMethodToClass(
     if (classBody.includes(methodSignature)) {
         return contents;
     }
-    return contents.slice(0, bodyEnd) + `\n${methodToAdd}` + contents.slice(bodyEnd);
+    return appendToClassBody(contents, methodToAdd);
+}
+
+function appendToClassBody(contents: string, methodToAdd: string): string {
+    const classRange = getAppDelegateBodyRange(contents);
+    if (!classRange) {
+        return contents;
+    }
+    return contents.slice(0, classRange.bodyEnd) + `\n${methodToAdd}` + contents.slice(classRange.bodyEnd);
 }
 
 function ensureRequestPermissionMethod(contents: string): string {
@@ -163,6 +177,26 @@ function ensureRequestPermissionMethod(contents: string): string {
         IOS_METHOD_REQUEST_PERMISSIONS,
         "add onRequestPushNotifications method to AppDelegate"
     );
+}
+
+function ensureUniversalLinkTracking(contents: string): string {
+    if (UNIVERSAL_LINK_TRACKING_REGEX.test(contents)) {
+        return contents;
+    }
+    const continueMatch = contents.match(CONTINUE_USER_ACTIVITY_REGEX);
+    const range = getMethodBodyRange(contents, CONTINUE_USER_ACTIVITY_REGEX);
+    if (continueMatch && range) {
+        const trackLine = iosLineTrackUniversalLink(continueMatch[1]);
+        return contents.slice(0, range.bodyStart) + trackLine + contents.slice(range.bodyStart);
+    }
+    if (CONTINUE_USER_ACTIVITY_METHOD_REGEX.test(contents)) {
+        logWarning(
+            "withAppDelegate",
+            "AppDelegate overrides application(_:continue:restorationHandler:) in a form the plugin cannot parse; add Mindbox.shared.track(.universalLink(userActivity)) to it by hand"
+        );
+        return contents;
+    }
+    return appendToClassBody(contents, IOS_METHOD_CONTINUE_USER_ACTIVITY);
 }
 
 function ensureExpoNotificationDelegateExtension(contents: string): string {
@@ -199,6 +233,7 @@ function applySwiftModifications(contents: string, nativeRequestPermission: bool
     if (nativeRequestPermission) {
         modified = ensureRequestPermissionMethod(modified);
     }
+    modified = ensureUniversalLinkTracking(modified);
     if (useExpoNotifications) {
         modified = ensureExpoNotificationDelegateExtension(modified);
     }

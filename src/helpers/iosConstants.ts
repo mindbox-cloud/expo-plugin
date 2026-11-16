@@ -55,13 +55,9 @@ export const IOS_METHOD_REQUEST_PERMISSIONS: string = `
     }
   }
 `;
-export const IOS_TRACK_UNIVERSAL_LINK_SIGNATURE: string = ".universalLink(";
-
 export const iosLineTrackUniversalLink = (userActivity: string): string => `
     Mindbox.shared.track(.universalLink(${userActivity}))
 `;
-
-export const IOS_METHOD_CONTINUE_USER_ACTIVITY_SIGNATURE: string = "continue userActivity:";
 
 export const IOS_METHOD_CONTINUE_USER_ACTIVITY: string = `
   public override func application(

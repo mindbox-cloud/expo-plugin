@@ -21,6 +21,7 @@
     "expo-notifications": "~58.1.9",
     "expo-splash-screen": "~58.0.14",
     "expo-status-bar": "~58.0.5",
+    "expo-tracking-transparency": "~58.0.2",
     "mindbox-expo-plugin": "1.0.5",
     "mindbox-sdk": "^2.16.0",
     "react": "19.3.0",

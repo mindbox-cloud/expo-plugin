@@ -22,6 +22,16 @@
         "NSPrivacyTracking": true,
         "NSPrivacyTrackingDomains": [
           "api-tracking.mindbox.ru"
+        ],
+        "NSPrivacyCollectedDataTypes": [
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": true,
+            "NSPrivacyCollectedDataTypePurposes": [
+              "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising"
+            ]
+          }
         ]
       }
     },
